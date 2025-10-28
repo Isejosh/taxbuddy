@@ -11,7 +11,7 @@ buttons.forEach((btn, index) => {
 
     // If it's the last slide, go to login
     if (current === slides.length - 1) {
-      window.location.href = "login.html";
+      window.location.href = "choose-account.html";
       return;
     }
 
