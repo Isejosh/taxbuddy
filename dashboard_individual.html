@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="header-top">
+            <div class="user-info">
+                <p>Welcome,</p>
+                <h2>Samuel James</h2>
+                <span>Individual account</span>
+            </div>
+            <button class="notification-btn">
+                <img src="icons/notification-btn.svg" alt="">
+            </button>
+        </div>
+
+        <div class="date-filters">
+            <div class="selector-container">
+                <select name="month">
+                    <option>Month </option>
+                    <option value="january">January</option>
+                    <option value="february">February</option>
+                    <option value="march">March</option>
+                    <option value="april">April</option>
+                    <option value="may">May</option>
+                    <option value="june">June</option>
+                    <option value="july">July</option>
+                    <option value="august">August</option>
+                    <option value="september">September</option>
+                    <option value="october">October</option>
+                    <option value="november">November</option>
+                    <option value="december">December</option>
+                </select>
+            </div>
+            <div class="selector-container">
+                <select name="year">
+                    <option>2025</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="tax-overview">
+            <h2>Tax Status Overview</h2>
+            <!-- Paid Taxes -->
+            <div class="tax-row">
+                <div class="label">Paid Taxes</div>
+                <div class="percent paid" id="paid-percent">0%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill paid-fill" id="paid-bar"></div>
+            </div>
+
+            <!-- Unpaid Taxes -->
+            <div class="tax-row">
+                <div class="label">Unpaid Taxes</div>
+                <div class="percent unpaid" id="unpaid-percent">0%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill unpaid-fill" id="unpaid-bar"></div>
+            </div>
+        </div>
+
+
+        <!-- Quick Actions Section -->
+
+        <div class="quick-actions">
+            <h3>Quick Actions</h3>
+
+            <div class="actions-grid">
+                <a href="" class="action-card">
+                    <p class="card-icon"><img src="icons/tax-calculator.svg" alt="calculator"></p>
+                    <p>Tax Calculator</p>
+                </a>
+
+                <a href="" class="action-card">
+                    <p class="card-icon"><img src="icons/tax-history.svg" alt="history"></p>
+                    <p>Tax History</p>
+                </a>
+
+                <a href="" class="action-card">
+                    <p class="card-icon"><img src="icons/notifications.svg" alt="_notice"></p>
+                    <p>Notifications</p>
+                </a>
+
+                <a href="" class="action-card">
+                    <p class="card-icon"><img src="icons/Group.svg" alt="_profile"></p>
+                    <p>Profile & Settings</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tax-income, Payable, Unpaid and Paid -->
+
+        <div class="tax-ledger">
+            <div class="tax-item tax-income">
+                <p class="tax-icon"><img src="icons/chart.svg"></p>
+                <p class="tax-description">Total Income</p>
+                <h1>₦0</h1>
+            </div>
+
+            <div class="tax-item tax-payable">
+                <p class="tax-icon"><img src="icons/naira.svg"></p>
+                <p class="tax-description">Total Payable</p>
+                <h1>₦0</h1>
+            </div>
+
+            <div class="tax-item tax-unpaid">
+                <p class="tax-icon"><img src="icons/uncheck.svg"></p>
+                <p class="tax-description">Unpaid</p>
+                <h1>₦0</h1>
+            </div>
+
+            <div class="tax-item tax-paid">
+                <p class="tax-icon"><img src="icons/check.svg"></p>
+                <p class="tax-description">Paid</p>
+                <h1>₦0</h1>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Footer-Nav -->
+
+    <div class="footer-nav">
+        <a href="" class="nav-item">
+            <img src="icons/home.svg" alt="">
+            <p>Home</p>
+        </a>
+        <a href="" class="nav-item">
+            <img src="icons/calculate.svg" alt="">
+            <p>Calculate</p>
+        </a>
+        <a href="" class="nav-item">
+            <img src="icons/history.svg" alt="">
+            <p>History</p>
+        </a>
+        <a href="" class="nav-item">
+            <img src="icons/notification.svg" alt="">
+            <p>Alert</p>
+        </a>
+        <a href="" class="nav-item">
+            <img src="icons/profile.svg" alt="">
+            <p>Profile</p>
+        </a>
+    </div>
+</body>
+
+</html>
