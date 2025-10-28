@@ -40,12 +40,14 @@ body{
   gap: 9rem;
 }
 
+/* Progress & Skip */
 .onboarding_top {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+/* Progress Dots */
 .onboarding_progress .dot {
   height: 8px;
   width: 8px;
@@ -63,12 +65,14 @@ body{
   background: var(--primary);
 }
 
+/* Skip */
 .onboarding_skip{
     text-decoration: none;
     font-size: 1.4rem;
     color: #ccc;
 }
 
+/* Splash Screen Image & Body */
 .onboarding_image {
   width: 100%;
   max-width: 30rem;
@@ -106,7 +110,7 @@ body{
   background: var(--primary);
 }
 
-
+/* Onboarding Slides */
 .onboarding_slide {
   display: none;
   animation: fadeIn 0.5s ease-in-out;
