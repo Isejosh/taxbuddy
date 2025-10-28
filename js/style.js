@@ -1,14 +1,18 @@
 // Pop up screen
-    window.addEventListener("load", function() {
-      setTimeout(() => {
-        const splash = document.getElementById("splash_screen");
-        splash.style.opacity = "0";
-        setTimeout(() => {
-          splash.style.display = "none";
-          document.getElementById("main_content").style.display = "flex";
-        }, 600); // wait for fade-out
-      }, 3000); // show for 4 seconds
-    });
+   window.addEventListener("load", function() {
+  const splash = document.getElementById("splash_screen");
+  const main = document.getElementById("main_content");
+
+  // Wait a moment for mobile browsers to fully render
+  setTimeout(() => {
+    splash.classList.add("hide");
+    main.style.display = "flex"; // ensure visible
+    setTimeout(() => {
+      main.classList.add("show");
+    }, 100);
+  }, 3500); // splash stays for 3.5 seconds
+});
+
 
 
 // onboarding.js
