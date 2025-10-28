@@ -27,6 +27,102 @@ body{
     font-family: "Poppins", sans-serif;
 }
 
+/* Index Design */
+.onboarding {
+  width: 90%;  
+  max-width: 50rem;
+  margin: 0 auto;
+  text-align: center;
+  padding: 4rem 3rem;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 9rem;
+}
+
+.onboarding_top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.onboarding_progress .dot {
+  height: 8px;
+  width: 8px;
+  background: #ccc;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.last{
+    width: 3rem;
+    border-radius: 10px;
+}
+
+.dot.active {
+  background: var(--primary);
+}
+
+.onboarding_skip{
+    text-decoration: none;
+    font-size: 1.4rem;
+    color: #ccc;
+}
+
+.onboarding_image {
+  width: 100%;
+  max-width: 30rem;
+  margin-bottom: 9rem;
+}
+
+.onboarding_title {
+  font-size: 1.8rem;
+  color: var(--black);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.onboarding_text {
+  font-size: 1.3rem;
+  color: var(--black);
+  width: 18rem;
+  margin: 0 auto;
+  line-height: 2;
+}
+
+.onboarding_btn {
+  background: var(--primary);
+  color: white;
+  padding: 2rem 3rem;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  margin-top: 3rem;
+  width: 50%;
+}
+
+.onboarding_btn-start {
+  background: var(--primary);
+}
+
+
+.onboarding_slide {
+  display: none;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.onboarding_slide.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* Login */
 .login{
     width: 90%;
     max-width: 50rem;
