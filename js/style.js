@@ -1,3 +1,16 @@
+// Pop up screen
+    window.addEventListener("load", function() {
+      setTimeout(() => {
+        const splash = document.getElementById("splash_screen");
+        splash.style.opacity = "0";
+        setTimeout(() => {
+          splash.style.display = "none";
+          document.getElementById("main_content").style.display = "flex";
+        }, 600); // wait for fade-out
+      }, 3000); // show for 4 seconds
+    });
+
+
 // onboarding.js
 const slides = document.querySelectorAll('.onboarding_slide');
 const dots = document.querySelectorAll('.dot');
