@@ -232,8 +232,18 @@ body {
 
 /* Selector */
 .login_input-select{
-  background: var(--secondary);
-  text-align: center;
+  background-color: var(--secondary);
+  color: #fff;
+  font-weight: 500;
+}
+
+.login_input-select option{
+  background: #FEF0E8;
+  border: none;
+  border-radius: 10px;
+  color: var(--five-zero-black);
+  padding: 20rem;
+  text-align: left;
 }
 
 /* Forgot Passsword */
@@ -248,21 +258,21 @@ body {
 /* Terms & Conditons */
 .terms_conditions {
   font-size: 1.4rem;
-  color: var(--primary);
+  color: var(--secondary);
   display: flex;
   gap: 3px;
   align-items: center;
 }
 
 .terms_conditions-link {
-  color: var(--primary);
-  font-weight: 600;
+  text-decoration: none;
+  color: var(--secondary);
 }
 
 .terms_conditions-input {
   width: 2rem;
   height: 2rem;
-  accent-color: var(--primary);
+  accent-color: var(--secondary);
 }
 
 /* Login Button */

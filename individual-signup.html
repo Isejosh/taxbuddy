@@ -29,7 +29,7 @@
                 <div class="login_field">
                     <label for="income" class="login_label">Annual Income Range</label>
                     <select name="" id="" class="login_input login_input-select">
-                        <option>Select Range</option>
+                        <option selected disabled>Select Range</option>
                         <option value="hundred">N0 - N100,000</option>
                         <option value="three-hundred">N100,000 - N300,000</option>
                         <option value="million">N300,000 - N1,000,000</option>
@@ -41,8 +41,18 @@
                 </div>
 
                 <div class="login_field">
+                    <label for="tin" class="login_label">Tax Identification Number (TIN) - Optional</label>
+                    <input type="text" id="tin" class="login_input" placeholder="Enter your TIN">
+                </div>
+
+                <div class="login_field">
                     <label for="password" class="login_label">Password</label>
                     <input type="password" id="password" class="login_input" placeholder="************">
+                </div>
+
+                 <div class="login_field">
+                    <label for="confirm-password" class="login_label">Confirm Password</label>
+                    <input type="password" id="confirm-password" class="login_input" placeholder="************">
                 </div>
             </form>
             
@@ -76,7 +86,7 @@
 
             <p class="login_signup-text">
                 Already have an account?
-                <a href="login.html" class="signup_link">Sign in</a>
+                <a href="individual-login.html" class="signup_link">Sign in</a>
             </p>
          </div>
     </div>
