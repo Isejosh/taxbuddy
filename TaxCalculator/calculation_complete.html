@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Calculation Complete</title>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" href="./calculateTax.css">
+</head>
+<body class="complete">
+    
+    <main>
+
+        <header class="comp_head">
+            <div class="icon"><i class="ph ph-check-circle"></i></div>
+            <div class="head">
+                <h2>Tax Calculation Complete!</h2>
+                <div class="date">month & year choosen</div>
+            </div>
+        </header>
+
+        <section class="taxbreakdown_resul cp">
+            <div class="breakdown_cards">
+                <div class="card_one bdc">
+                    <p>Total Income</p>
+                    <h1>₦500,000</h1>
+                </div>
+                <div class="card_two bdc">
+                    <p>Effective Tax rate</p>
+                    <h1>20.00%</h1>
+                </div>
+            </div>
+
+            <div class="tax_bands">
+                <h4>Tax Bands</h4>
+                <div class="tax_band">
+                    <div class="band">
+                        <p>Small Business CIT</p>
+                        <h4>₦100,000</h4>
+                    </div>
+                    <p>20%</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tax_payable">
+            <div class="breakdown_cards">
+                <div class="card_one bdc">
+                    <p>Total Income</p>
+                    <h1>₦500,000</h1>
+                </div>
+                <div class="card_two bdc">
+                    <p>Tax Payable</p>
+                    <h1 style="color: red;">₦100,000</h1>
+                </div>
+                <div class="card_two bdc">
+                    <p>Effective Tax rate</p>
+                    <h1>20.00%</h1>
+                </div>
+            </div>
+            <div class="tax_bands_comp">
+                <h4>Tax Bands</h4>
+                <div class="tax_band">
+                    <div class="band">
+                        <p>Small Business CIT</p>
+                        <h4>₦100,000</h4>
+                    </div>
+                    <p>20%</p>
+                </div>
+            </div>
+            <div class="cp_btns">
+                <button class="btn comp_btn1">Save to Tracker</button>
+                <button class="btn comp_btn2">Calculate Another</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="./calculateTax.js"></script>
+</body>
+</html>

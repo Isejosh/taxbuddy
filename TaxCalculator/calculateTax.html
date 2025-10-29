@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" href="./calculateTax.css">
+</head>
+
+<body>
+    <main>
+
+        <header class="heading">
+            <div class="head_text">
+                <i class="ph ph-arrow-left"></i>
+                <h2>Tax Calculator</h2>
+            </div>
+            <p>Calculate your tax obligations based on revenue</p>
+        </header>
+
+        <section class="details_card">
+            <h2>Enter Details</h2>
+            <aside class="details_body">
+                <div class="picker btn">
+                    <select id="monthSelect">
+                        <option value="">Select Month</option>
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                        <option value="April">April</option>
+                        <option value="May">May</option>
+                        <option value="June">June</option>
+                        <option value="July">July</option>
+                        <option value="August">August</option>
+                        <option value="September">September</option>
+                        <option value="October">October</option>
+                        <option value="November">November</option>
+                        <option value="December">December</option>
+                    </select>
+                </div>
+
+                <div class="picker btn">
+                    <select id="yearSelect" >
+                        <option value="">Select Year</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+
+                <div class="rev_input">
+                    <p>Annual Revenue (₦)</p>
+                    <input type="number" placeholder="Enter amount" id="incomeInput">
+                </div>
+
+                <button class="btn calculate_btn" id="calculateBtn"><i class="ph ph-calculator"></i> Calculate</button>
+            </aside>
+        </section>
+
+        <section class="tax_breakdown">
+
+            <h2>Tax Breakdown</h2>
+
+            <div class="placeholder">
+                <div class="calculator"><i class="ph ph-calculator"></i></div>
+                <p>Enter your income and tap calculate to viwe your tax breakdown.</p>
+            </div>
+
+        </section>
+
+         <section class="taxbreakdown_result">
+            <h2>Tax Breakdown</h2>
+
+            <div class="breakdown_cards">
+                <div class="card_one bdc">
+                    <p>Total Tax Payable</p>
+                    <h1>₦100,000</h1>
+                </div>
+                <div class="card_two bdc">
+                    <p>Effective Tax rate</p>
+                    <h1>20.00%</h1>
+                </div>
+            </div>
+
+            <div class="tax_bands">
+                <h4>Tax Bands</h4>
+                <div class="tax_band">
+                    <div class="band">
+                        <p>Small Business CIT</p>
+                        <h4>₦100,000</h4>
+                    </div>
+                    <p>20%</p>
+                </div>
+
+                <button class="btn save_btn">Save to Tracker</button>
+            </div>
+        </section>
+
+        <section class="rates">
+            <h2>Nigerian CIT Rates</h2>
+           <div class="rate">
+             <ul>
+                <li>Small Business (Revenue below ₦25M): 20%</li>
+                <li>Medium/Large Business: 30% CIT</li>
+            </ul>
+           </div>
+        </section>
+
+        <nav class="bottom-nav">
+  <a href="#" class="nav-item active">
+    <i class="ph ph-house"></i>
+    <span>Home</span>
+  </a>
+  <a href="#" class="nav-item">
+    <i class="ph ph-calculator"></i>
+    <span>Calculator</span>
+  </a>
+  <a href="#" class="nav-item">
+    <i class="ph ph-clock"></i>
+    <span>History</span>
+  </a>
+  <a href="#" class="nav-item">
+    <i class="ph ph-bell-simple-ringing"></i>
+    <span>Alerts</span>
+  </a>
+  <a href="#" class="nav-item">
+    <i class="ph ph-user"></i>
+    <span>Profile</span>
+  </a>
+</nav>
+
+       
+
+    </main>
+
+
+<script src="./calculateTax.js"></script>
+
+</body>
+
+</html>
