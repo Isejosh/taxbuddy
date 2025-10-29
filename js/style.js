@@ -37,3 +37,50 @@ buttons.forEach((btn, index) => {
     dots[current].classList.add('active');
   });
 });
+
+//Verify Movement
+document.addEventListener("DOMContentLoaded", function() {
+  const inputs = document.querySelectorAll(".otp_input");
+
+  inputs.forEach((input, index) => {
+    input.addEventListener("input", (e) => {
+      // Only allow numbers
+      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+
+      // Move to next field
+      if (e.target.value && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    });
+
+    input.addEventListener("keydown", (e) => {
+      // Move to previous input on backspace
+      if (e.key === "Backspace" && !e.target.value && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
+
+    // Make mobile keyboard numeric
+    input.setAttribute("inputmode", "numeric");
+    input.setAttribute("pattern", "[0-9]*");
+  });
+});
+
+
+//Password
+document.addEventListener("DOMContentLoaded", function() {
+  const toggleButtons = document.querySelectorAll(".password-toggle");
+
+  toggleButtons.forEach(toggle => {
+    toggle.addEventListener("click", () => {
+      const input = toggle.previousElementSibling;
+      const isPassword = input.type === "password";
+
+      input.type = isPassword ? "text" : "password";
+
+      toggle.classList.toggle("ph-eye");
+      toggle.classList.toggle("ph-eye-slash");
+    });
+  });
+});
+

@@ -60,7 +60,7 @@ body {
   font-size: 1.4rem;
   font-weight: 500;
   position: absolute;
-  bottom: 0;
+  bottom: 20px;
   left:0;
   width: 100%;
   display: flex;
@@ -74,7 +74,6 @@ body {
   margin: 0 auto;
   text-align: center;
   padding: 4rem 3rem;
-  font-family: "Poppins", sans-serif;
   display: flex;
   flex-direction: column;
   gap: 5rem;
@@ -275,6 +274,31 @@ body {
   accent-color: var(--secondary);
 }
 
+.password-wrapper {
+  position: relative;
+}
+
+.password-input {
+  width: 100%;
+  padding-right: 3rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.8rem;
+  color: #777;
+  transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+  color: var(--primary);
+}
+
+
 /* Login Button */
 .login_button {
   width: 100%;
@@ -382,4 +406,148 @@ body {
     padding: 2rem 3rem;
     border: 1px solid #ccc;
     border-radius: 2rem;
+}
+
+/* Verify Code */
+.verify {
+  width: 90%;
+  max-width: 50rem;
+  margin: 0 auto;
+  text-align: center;
+  padding: 4rem 3rem;
+}
+
+.back-arrow {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  text-decoration: none;
+  font-size: 2rem;
+  color: var(--black);
+}
+
+.verify_title {
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 1rem;
+}
+
+.verify_subtext {
+  color: #555;
+  font-size: 1.4rem;
+  margin-bottom: 3rem;
+}
+
+.verify_email {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.otp_inputs {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.otp_input {
+  width: 4rem;
+  height: 4rem;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 1.8rem;
+  outline: var(--primary);
+  transition: border-color 0.2s;
+}
+
+.otp_input:focus {
+  border-color: var(--primary);
+}
+
+.verify_resend {
+  font-size: 1.3rem;
+  color: #777;
+  margin-bottom: 2rem;
+}
+
+.resend_link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.verify_btn {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  width: 100%;
+  padding: 1.4rem;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+
+/* Forgot Password */
+.auth-container{
+  display: flex;
+  flex-direction: column;
+  gap: 8rem;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 50rem;
+  padding: 4rem 3rem;
+}
+
+.auth-top{
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.auth-back{
+  text-decoration: none;
+  font-size: 1.8rem;
+  color: var(--black);
+}
+
+.auth-title{
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.auth-text{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.auth-text_heading{
+  font-size: 1.4rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.auth-text_body{
+  font-size: 1.4rem;
+  color: #ccc;
+}
+
+.auth-bottom{
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.email-verification{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.email-verification_input{
+  margin-bottom: 1rem;
 }
