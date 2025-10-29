@@ -230,12 +230,19 @@ body {
   background: rgba(33, 33, 33, 0.05);
 }
 
+/* Selector */
+.login_input-select{
+  background: var(--secondary);
+  text-align: center;
+}
+
 /* Forgot Passsword */
 .login_forgot {
   display: block;
   text-align: right;
   font-size: 1.3rem;
-  color: var(--primary);
+  color: var(--secondary);
+  text-decoration: none;
 }
 
 /* Terms & Conditons */
