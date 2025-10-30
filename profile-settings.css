@@ -254,7 +254,7 @@ input:checked + .slider:before {
     margin-top: 3rem;
     cursor: pointer;
     font-size: 500;
-     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 .logout-btn{
     display: block;
@@ -267,7 +267,7 @@ input:checked + .slider:before {
     color: var(--primary);
     cursor: pointer;
     font-weight: 500;
-     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
 }
 .abt-tax-container{
@@ -290,5 +290,23 @@ input:checked + .slider:before {
 .abt-tax-text{
     padding-left: 14px;
     
+}
+ /* Reset Password */
+.pword-reset-container{
 
+    background-color: var(--white);
+    padding: var(--card-padding);
+    border-radius: var(--card-radius);
+    border: 1px solid var(--two-five-black);
+    margin-top: 4rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.pword-reset-container > h2 {
+    margin-bottom: 1rem;
+    
+}
+
+.reset-text {
+    padding-left: 14px;
+    margin-bottom: 3rem;
 }
