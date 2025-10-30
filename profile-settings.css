@@ -254,6 +254,7 @@ input:checked + .slider:before {
     margin-top: 3rem;
     cursor: pointer;
     font-size: 500;
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 .logout-btn{
     display: block;
@@ -266,6 +267,7 @@ input:checked + .slider:before {
     color: var(--primary);
     cursor: pointer;
     font-weight: 500;
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
 }
 .abt-tax-container{
@@ -288,4 +290,5 @@ input:checked + .slider:before {
 .abt-tax-text{
     padding-left: 14px;
     
+
 }
