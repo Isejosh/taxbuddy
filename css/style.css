@@ -551,3 +551,286 @@ body {
 .email-verification_input{
   margin-bottom: 1rem;
 }
+
+/* Tax History */
+    .container {
+      width: 90%;
+      max-width: 50rem;
+      padding: 4rem 3rem;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .container-top{
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .container-top_text-heading {
+      font-size: 2rem;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      color: #666;
+    }
+
+    .card-container{
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 1rem;
+      padding: 1.4rem;
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: #212121BF;
+    }
+
+    .card.paid {
+      background: #d7f5d3 ;
+    }
+
+    .card.unpaid {
+      background: #f8d7d7;
+      color: #c92a2a;
+    }
+
+    .card.amount {
+      background: #e6e4fa;
+      color: #1a1aff;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin: 15px 0;
+      flex-direction: column;
+    }
+
+    select {
+      flex: 1;
+      padding: 1rem;
+      border-radius: 8px;
+      border: none;
+      background: #ff7a00;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 5rem 1rem;
+      text-align: center;
+      margin: 2rem 0;
+      margin-bottom: 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+   .empty-state_calendar{
+    font-size: 5rem;
+   }
+
+    .empty-state button {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 1.2rem 1.6rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* Tax History Paid */
+    .paid-state{
+      background: var(--white);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      margin: 2rem 0;
+      border-radius: 1.2rem;
+    }
+
+    .paid-top{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .paid-top_head{
+      font-size: 2rem;
+      font-weight: 500;
+    }
+
+    .paid-top_body{
+      color: var(--error);
+    }
+
+    .paid-middle{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .paid-text{
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .paid_green{
+      color: var(--primary);
+    }
+
+    .paid-text_top{
+      color: #1A1716BF;
+      font-size: 1.8rem;
+    }
+
+    .paid-btn{
+      background: var(--primary);
+      border: none;
+      color: var(--white);
+      padding: 1.2rem 1.6rem;
+      width: 100%;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    .check-icon{
+      text-decoration: none;
+      color: var(--white);
+      font-size: 1.3rem;
+      border:1px solid var(--white);
+      border-radius: 50%;
+      align-items: center;
+      padding: 3px;
+    }
+
+    .unpaid-btn{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    /* Mark as Paid MOdal */
+   /* Background overlay */
+.bottom_modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  justify-content: center;
+  align-items: flex-end; /* bottom position */
+  z-index: 999;
+  transition: opacity 0.3s ease;
+}
+
+/* Modal box */
+.modal_content {
+  background: #fff;
+  width: 100%;
+  max-width: 50rem;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 13rem 2rem;
+  text-align: center;
+  animation: slideUp 0.35s ease; 
+}
+
+.modal_content h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+}
+
+.modal_content p {
+  color: #555;
+  margin-bottom: 1rem;
+  font-size: 1.6rem;
+}
+
+.modal_details p {
+  margin: 5px 0;
+  font-size: 1.6rem;
+}
+
+/* Buttons */
+.confirm_btn {
+  width: 100%;
+  background: #1f6f34;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 2rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.cancel_btn {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid #1f6f34;
+  color: #1f6f34;
+  border-radius: 8px;
+  padding: 2rem;
+  font-weight: 500;
+  margin-top: 0.8rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+/* Success Toast */
+.toast {
+  position: fixed;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f6f34;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: 9999;
+}
+
+/* Show animation */
+.toast.show {
+  top: 20px;
+  opacity: 1;
+}

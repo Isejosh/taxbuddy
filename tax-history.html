@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tax History</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/calculateTax.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="container-top">
+        <a href="#" class="auth-back">
+          <i class="ph ph-arrow-left"></i>
+        </a>
+
+        <div class="container-top_text">
+          <h2 class="container-top_text-heading">Tax History</h2>
+        </div>
+      </div>
+      <p class="subtitle">Track and manage your tax payment records</p>
+
+      <div class="card-container">
+        <div class="card">
+          <h3>Total Records</h3>
+          <p>0</p>
+        </div>
+        <div class="card paid">
+          <h3>Paid</h3>
+          <p>0</p>
+        </div>
+        <div class="card unpaid">
+          <h3>Unpaid</h3>
+          <p>0</p>
+        </div>
+        <div class="card amount">
+          <h3>Paid Amount</h3>
+          <p>₦0</p>
+        </div>
+      </div>
+
+      <div class="filters">
+        <select>
+          <option>Month</option>
+        </select>
+        <select>
+          <option>2025</option>
+        </select>
+      </div>
+
+      <div class="empty-state">
+        <i class="ph ph-calendar-dots empty-state_calendar"></i>
+        <p>Enter your income and tap calculate to view your tax breakdown.</p>
+        <button onclick="window.location.href='calculateTax.html'">
+          Calculate Your First Tax
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer Nav -->
+    <nav class="bottom-nav">
+      <a href="dashboard_business.html" class="nav-item active">
+        <i class="ph ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="calculateTax.html" class="nav-item">
+        <i class="ph ph-calculator"></i>
+        <span>Calculator</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="ph ph-clock"></i>
+        <span>History</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="ph ph-bell-simple-ringing"></i>
+        <span>Alerts</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="ph ph-user"></i>
+        <span>Profile</span>
+      </a>
+    </nav>
+  </body>
+</html>

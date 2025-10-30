@@ -84,3 +84,30 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
+
+// Mark as Paid Pop up
+  
+  const openModal = document.getElementById("openModal");
+  const closeModal = document.getElementById("closeModal");
+  const confirmPayment = document.getElementById("confirmPayment");
+  const modal = document.getElementById("paymentModal");
+
+  // Open modal
+  openModal.addEventListener("click", () => {
+    modal.style.display = "flex";
+  });
+
+  // Close modal
+  closeModal.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  // Redirect to paid page
+  confirmPayment.addEventListener("click", () => {
+    window.location.href = "tax-history_paid.html?success=true";
+  });
+
+  // Close modal if clicked outside
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) modal.style.display = "none";
+  });

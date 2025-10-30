@@ -43,12 +43,12 @@ body{
     font-size: var(--body-medium);
 }
 main{
-      /* background-color: blue; */
-    height: vh;
-    margin: auto;
+    margin: 0 auto;
     padding: 2rem 1rem;
-    width: 85%;
+    width: 90%;
+    max-width: 500px;
 }
+
 .heading{
     display: flex;
     flex-direction: column;
