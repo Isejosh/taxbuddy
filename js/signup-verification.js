@@ -41,32 +41,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/auth/sign_up/${endpoint}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            email,
-            password,
-            income,
-          }),
-        }
-      );
 
-      const data = await response.json();
+        // Register User
+      const data = await apiRequest(`/auth/sign_up/${endpoint}`, "POST", {
+        name,
+        email,
+        password,
+        income,
+      });
 
-      if (response.ok) {
-        alert(`✅ ${formType} signup successful! Redirecting to login...`);
-        window.location.href = formType === "Individual"
-          ? "individual-login.html"
-          : "business-login.html";
-      } else {
-        alert(`❌ ${data.message || "Signup failed. Please try again."}`);
+
+      if (!data || !data.success) {
+        alert(`❌ ${data?.message || "Signup failed."}`);
+        return;
       }
+
+      //Send Otp
+      const otpData = await apiRequest("/auth/send_otp", "POST", { email });
+      if (!otpData || !otpData.success) {
+        alert(`❌ ${otpData?.message || "Failed to send OTP."}`);
+        return;
+      }
+
+      // Save email & account type to localStorage for verification page
+      localStorage.setItem("email", email);
+      localStorage.setItem("accountType", formType.toLowerCase());
+
+      alert("✅ Signup successful! Verification code sent to your email.");
+      window.location.href = "verify.html";
+
     } catch (error) {
       console.error("Signup error:", error);
       alert("⚠️ Server connection error. Please try again later.");

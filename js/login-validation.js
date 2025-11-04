@@ -20,30 +20,21 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       try {
-        // Step 2: Send login request
-        const response = await fetch("http://localhost:5000/api/auth/sign_in", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
+        const data = await apiRequest("/auth/sign_in", "POST", {
+          email,
+          password,
         });
-
-        const data = await response.json();
-
-        // Step 3: Handle response
-        if (response.ok) {
-          alert("✅ Login successful!");
-          // Store token in localStorage
+        // backend should return { token, user } on success; check `data`
+        if (data?.token) {
           localStorage.setItem("authToken", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          // Redirect to dashboard (you can change the page)
+          localStorage.setItem("user", JSON.stringify(data.user || {}));
+          alert("✅ Login successful!");
           window.location.href = "dashboard.html";
         } else {
           alert(`❌ ${data.message || "Invalid credentials"}`);
         }
-      } catch (error) {
-        console.error("Login error:", error);
+      } catch (err) {
+        console.error(err);
         alert("⚠️ Server connection error. Please try again later.");
       }
     });
