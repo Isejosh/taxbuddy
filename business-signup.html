@@ -19,7 +19,7 @@
         </div>
 
         <div class="login_form-container">
-            <form action="" class="login_form">
+            <form action="" class="login_form" id="businessSignupForm">
                 <div class="login_field">
                     <label for="name" class="login_label">Name</label>
                     <input type="text" id="name" class="login_input" placeholder="Samuel James">
@@ -31,8 +31,8 @@
                 </div>
 
                 <div class="login_field">
-                    <label for="income" class="login_label">Business Type</label>
-                    <select name="" id="" class="login_input login_input-select">
+                    <label for="business" class="login_label">Business Type</label>
+                    <select name="" id="business" class="login_input login_input-select" required>
                         <option selected disabled>Business Type</option>
                         <option value="small-business">Small Business (Revenue below ₦25M)</option>
                         <option value="medium-business">Medium Business</option>
@@ -42,7 +42,7 @@
 
                 <div class="login_field">
                     <label for="income" class="login_label">Annual Income Range</label>
-                    <select name="" id="" class="login_input login_input-select">
+                    <select name="" id="income" class="login_input login_input-select" required>
                         <option selected disabled>Select Range</option>
                         <option value="hundred">N0 - N100,000</option>
                         <option value="three-hundred">N100,000 - N300,000</option>
@@ -84,14 +84,14 @@
               <i class="ph ph-eye password-toggle"></i>
             </div>
           </div>
-            </form>
-            
-            <div class="terms_conditions">
+
+           <div class="terms_conditions">
                 <input type="checkbox" name="terms" id="terms" class="terms_conditions-input">
                 <label for="terms">Agree with <a href="#" class="terms_conditions-link">Terms & Conditions</a></label>
             </div>
 
             <button type="submit" class="login_button">Sign Up</button>
+            </form>
         </div>
 
         <!-- Login Footer -->
@@ -122,5 +122,6 @@
     </div>
 
     <script src="js/style.js"></script>
+    <script src="js/signup-verification.js"></script>
 </body>
 </html>

@@ -1,116 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaxBuddy -SignUp</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
     />
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
     <div class="login">
-        <!-- Login Header -->
-        <div class="login_header">
-            <img src="assets/images/textbuddy-logo.png" alt="TaxBuddy Logo" class="login_logo">
-            <p class="login_welcome">Fill your information below or register with your social accounts</p>
-        </div>
+      <!-- Login Header -->
+      <div class="login_header">
+        <img
+          src="assets/images/textbuddy-logo.png"
+          alt="TaxBuddy Logo"
+          class="login_logo"
+        />
+        <p class="login_welcome">
+          Fill your information below or register with your social accounts
+        </p>
+      </div>
 
-        <div class="login_form-container">
-            <form action="" class="login_form">
-                <div class="login_field">
-                    <label for="name" class="login_label">Name</label>
-                    <input type="text" id="name" class="login_input" placeholder="Samuel James">
-                </div>
+      <div class="login_form-container">
+        <form action="" class="login_form" id="individualSignupForm">
+          <div class="login_field">
+            <label for="name" class="login_label">Name</label>
+            <input
+              type="text"
+              id="name"
+              class="login_input"
+              placeholder="Samuel James"
+              required
+            />
+          </div>
 
-                <div class="login_field">
-                    <label for="email" class="login_label">Email</label>
-                    <input type="email" id="email" class="login_input" placeholder="example@gmail.com">
-                </div>
+          <div class="login_field">
+            <label for="email" class="login_label">Email</label>
+            <input
+              type="email"
+              id="email"
+              class="login_input"
+              placeholder="example@gmail.com"
+              required
+            />
+          </div>
 
-                <div class="login_field">
-                    <label for="income" class="login_label">Annual Income Range</label>
-                    <select name="" id="" class="login_input login_input-select">
-                        <option selected disabled>Select Range</option>
-                        <option value="hundred">N0 - N100,000</option>
-                        <option value="three-hundred">N100,000 - N300,000</option>
-                        <option value="million">N300,000 - N1,000,000</option>
-                        <option value="three-million">N1,000,000 - N3,000,000</option>
-                        <option value="five-million">N3,000,000 - N5,000,000</option>
-                        <option value="ten-million">N5,000,000 - N10,000,000</option>
-                        <option value="ten-plus">N10,000,000+</option>
-                    </select>
-                </div>
+          <div class="login_field">
+            <label for="income" class="login_label">Annual Income Range</label>
+            <select id="income" class="login_input login_input-select" required>
+              <option value="" disabled selected>Select Range</option>
+              <option value="hundred">N0 - N100,000</option>
+              <option value="three-hundred">N100,000 - N300,000</option>
+              <option value="million">N300,000 - N1,000,000</option>
+              <option value="three-million">N1,000,000 - N3,000,000</option>
+              <option value="five-million">N3,000,000 - N5,000,000</option>
+              <option value="ten-million">N5,000,000 - N10,000,000</option>
+              <option value="ten-plus">N10,000,000+</option>
+            </select>
+          </div>
 
-                <div class="login_field">
-                    <label for="tin" class="login_label">Tax Identification Number (TIN) - Optional</label>
-                    <input type="text" id="tin" class="login_input" placeholder="Enter your TIN">
-                </div>
+          <div class="login_field">
+            <label for="tin" class="login_label">
+              Tax Identification Number (TIN) - Optional
+            </label>
+            <input
+              type="text"
+              id="tin"
+              class="login_input"
+              placeholder="Enter your TIN"
+            />
+          </div>
 
-                <div class="login_field password-field">
+          <div class="login_field password-field">
             <label for="password" class="login_label">Password</label>
             <div class="password-wrapper">
               <input
                 type="password"
                 id="password"
                 class="login_input password-input"
-                placeholder="1234567"
+                placeholder="********"
+                required
+                minlength="6"
               />
               <i class="ph ph-eye password-toggle"></i>
             </div>
           </div>
 
-                 <div class="login_field password-field">
-            <label for="confirm-password" class="login_label"> Confirm Password</label>
+          <div class="login_field password-field">
+            <label for="confirm-password" class="login_label"
+              >Confirm Password</label
+            >
             <div class="password-wrapper">
               <input
                 type="password"
                 id="confirm-password"
                 class="login_input password-input"
-                placeholder="1234567"
+                placeholder="********"
+                required
+                minlength="6"
               />
               <i class="ph ph-eye password-toggle"></i>
             </div>
           </div>
-            </form>
-            
-            <div class="terms_conditions">
-                <input type="checkbox" name="terms" id="terms" class="terms_conditions-input">
-                <label for="terms">Agree with <a href="#" class="terms_conditions-link">Terms & Conditions</a></label>
-            </div>
 
-            <button type="submit" class="login_button">Sign Up</button>
+          <div class="terms_conditions">
+            <input
+              type="checkbox"
+              name="terms"
+              id="terms"
+              class="terms_conditions-input"
+              required
+            />
+            <label for="terms">
+              Agree with
+              <a href="#" class="terms_conditions-link">Terms & Conditions</a>
+            </label>
+          </div>
+
+          <button type="submit" class="login_button">Sign Up</button>
+        </form>
+      </div>
+
+      <!-- Login Footer -->
+      <div class="login_footer">
+        <div class="login_divider">
+          <span class="login_divider-text">or sign in with</span>
         </div>
 
-        <!-- Login Footer -->
-         <div class="login_footer">
-            <div class="login_divider">
-                <span class="login_divider-text">or sign in with</span>
-            </div>
+        <div class="login_socials">
+          <a href="#" class="login_social-link">
+            <img src="assets/images/apple-logo.png" alt="Apple" />
+          </a>
 
-            <div class="login_socials">
-                <a href="#" class="login_social-link">
-                    <img src="assets/images/apple-logo.png" alt="Apple">
-                </a>
+          <a href="#" class="login_social-link">
+            <img src="assets/images/google-logo.png" alt="Google" />
+          </a>
 
-                <a href="#" class="login_social-link">
-                    <img src="assets/images/google-logo.png" alt="Google">
-                </a>
+          <a href="#" class="login_social-link">
+            <img src="assets/images/instagram-logo.png" alt="Instagram" />
+          </a>
+        </div>
 
-                <a href="#" class="login_social-link">
-                    <img src="assets/images/instagram-logo.png" alt="Instagram">
-                </a>
-            </div>
-
-            <p class="login_signup-text">
-                Already have an account?
-                <a href="individual-login.html" class="signup_link">Sign in</a>
-            </p>
-         </div>
+        <p class="login_signup-text">
+          Already have an account?
+          <a href="individual-login.html" class="signup_link">Sign in</a>
+        </p>
+      </div>
     </div>
 
     <script src="js/style.js"></script>
-</body>
+    <script src="js/signup-verification.js"></script>
+  </body>
 </html>

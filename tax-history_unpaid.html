@@ -51,64 +51,77 @@
 
       <div class="filters">
         <select>
-          <option>Month</option>
+          <option selected disabled>Month</option>
+          <option value="january">January</option>
+          <option value="february">February</option>
+          <option value="march">March</option>
+          <option value="april">April</option>
+          <option value="may">May</option>
+          <option value="june">June</option>
+          <option value="july">July</option>
+          <option value="august">August</option>
+          <option value="september">September</option>
+          <option value="october">October</option>
+          <option value="november">November</option>
+          <option value="december">December</option>
         </select>
         <select>
-          <option>2025</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025" selected>2025</option>
+          <option value="2026">2026</option>
         </select>
       </div>
 
       <div class="paid-state">
-
         <div class="paid-top">
-            <p class="paid-top_head">October 2025</p>
-            <p class="paid-top_body">Unpaid</p>
+          <p class="paid-top_head">October 2025</p>
+          <p class="paid-top_body">Unpaid</p>
         </div>
 
         <div class="paid-middle">
-            <div class="paid-text">
-                <p class="paid-text_top">Income</p>
-                <p class="paid-text_bottom">₦500,000</p>
-            </div>
+          <div class="paid-text">
+            <p class="paid-text_top">Income</p>
+            <p class="paid-text_bottom">₦500,000</p>
+          </div>
 
-            <div class="paid-text">
-                <p class="paid-text_top">Tax Amount</p>
-                <p class="paid-text_bottom">₦100,000</p>
-            </div>
+          <div class="paid-text">
+            <p class="paid-text_top">Tax Amount</p>
+            <p class="paid-text_bottom">₦100,000</p>
+          </div>
         </div>
 
         <div class="paid-bottom">
-            <div class="paid-text">
-                <p class="paid-text_top">Tax Rate</p>
-                <p class="paid-text_bottom">20.00%</p>
-            </div>           
+          <div class="paid-text">
+            <p class="paid-text_top">Tax Rate</p>
+            <p class="paid-text_bottom">20.00%</p>
+          </div>
         </div>
 
         <button class="paid-btn unpaid-btn" id="openModal">
-            <a href="#" class="check-icon">
-                <i class="ph ph-check"></i>
-            </a>
+          <a href="#" class="check-icon">
+            <i class="ph ph-check"></i>
+          </a>
           Mark as Paid
         </button>
       </div>
     </div>
 
-   <!-- Mark as Paid Bottom Modal -->
-<div class="bottom_modal" id="paymentModal">
-  <div class="modal_content">
-    <h2>Mark as Paid</h2>
-    <p>Are you sure you want to mark this tax record as paid?</p>
+    <!-- Mark as Paid Bottom Modal -->
+    <div class="bottom_modal" id="paymentModal">
+      <div class="modal_content">
+        <h2>Mark as Paid</h2>
+        <p>Are you sure you want to mark this tax record as paid?</p>
 
-    <div class="modal_details">
-      <p><strong>Period:</strong> October 2025</p>
-      <p><strong>Amount:</strong> ₦2,000,000</p>
+        <div class="modal_details">
+          <p><strong>Period:</strong> October 2025</p>
+          <p><strong>Amount:</strong> ₦2,000,000</p>
+        </div>
+
+        <button class="confirm_btn" id="confirmPayment">Confirm Payment</button>
+        <button class="cancel_btn" id="closeModal">Cancel</button>
+      </div>
     </div>
-
-    <button class="confirm_btn" id="confirmPayment">Confirm Payment</button>
-    <button class="cancel_btn" id="closeModal">Cancel</button>
-  </div>
-</div>
-
 
     <!-- Footer Nav -->
     <nav class="bottom-nav">
