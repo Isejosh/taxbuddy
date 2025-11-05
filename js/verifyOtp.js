@@ -19,7 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Verify OTP button click
   verifyBtn.addEventListener("click", async () => {
-    const otp = Array.from(otpInputs).map(input => input.value).join("");
+    const otp = Array.from(otpInputs)
+      .map((input) => input.value)
+      .join("");
     if (otp.length < 4) {
       alert("Please enter the full OTP code.");
       return;
@@ -34,7 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
     verifyBtn.disabled = true;
 
     try {
-      const response = await apiRequest("/auth/verify_otp", "POST", { email, otp });
+      const response = await apiRequest("/auth/verify_otp", "POST", {
+        email,
+        otp,
+      });
 
       if (response.success) {
         alert("OTP verified successfully!");

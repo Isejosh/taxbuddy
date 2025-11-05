@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // 🔹 Auto-focus handling for OTP inputs
   otpInputs.forEach((input, index) => {
     input.addEventListener("input", () => {
       if (input.value.length === 1 && index < otpInputs.length - 1) {
@@ -26,9 +25,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 🔹 Verify button
+  // 🔹 Verify button - Using your apiRequest function
   verifyBtn.addEventListener("click", async () => {
-    const otp = Array.from(otpInputs).map((i) => i.value).join("");
+    const otp = Array.from(otpInputs)
+      .map((i) => i.value)
+      .join("");
     if (otp.length < 4) {
       alert("⚠️ Please enter the full 4-digit code.");
       return;
@@ -38,18 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
     verifyBtn.disabled = true;
 
     try {
-      // ✅ Adjust endpoint to match your backend route
-      const response = await fetch("http://localhost:5000/api/auth/verify_otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, otp }),
-      });
+      // ✅ Using your existing apiRequest function
+      const data = await apiRequest("/auth/verify_otp", "POST", { email, otp });
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (data.success) {
         alert("✅ Verification successful! Proceed to reset your password.");
 
         // Save token (if returned) for reset-password.js
@@ -70,19 +63,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 🔹 Resend link
+  // 🔹 Resend link - Using your apiRequest function
   resendLink.addEventListener("click", async (e) => {
     e.preventDefault();
+
+    // Optional: Add loading state for resend
+    const originalText = resendLink.textContent;
+    resendLink.textContent = "Sending...";
+    resendLink.style.pointerEvents = "none";
+
     try {
-      const response = await fetch("http://localhost:5000/api/auth/resend_otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await response.json();
-      alert(data.message || "✅ New verification code sent!");
+      const data = await apiRequest("/auth/send_otp", "POST", { email });
+
+      if (data.success) {
+        alert(data.message || "✅ New verification code sent!");
+      } else {
+        alert(data.message || "Failed to resend code. Please try again.");
+      }
     } catch (err) {
       alert("⚠️ Failed to resend code. Please try again later.");
+    } finally {
+      resendLink.textContent = originalText;
+      resendLink.style.pointerEvents = "auto";
     }
   });
 });

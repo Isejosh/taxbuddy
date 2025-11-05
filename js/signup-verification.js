@@ -41,15 +41,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-
-        // Register User
+      // Register User
       const data = await apiRequest(`/auth/sign_up/${endpoint}`, "POST", {
         name,
         email,
         password,
         income,
       });
-
 
       if (!data || !data.success) {
         alert(`❌ ${data?.message || "Signup failed."}`);
@@ -67,10 +65,9 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.setItem("email", email);
       localStorage.setItem("accountType", formType.toLowerCase());
 
-  alert("✅ Signup successful! Verification code sent to your email.");
-  // navigate to existing verification page
-  window.location.href = "verify-code.html";
-
+      alert("✅ Signup successful! Verification code sent to your email.");
+      // navigate to existing verification page
+      window.location.href = "verify-code.html";
     } catch (error) {
       console.error("Signup error:", error);
       alert("⚠️ Server connection error. Please try again later.");

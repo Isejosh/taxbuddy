@@ -8,14 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      // Step 1: Validate fields
       if (!email || !password) {
         alert("⚠️ Please fill in all fields.");
-        return;
-      }
-
-      if (!email.includes("@") || !email.includes(".")) {
-        alert("⚠️ Please enter a valid email address.");
         return;
       }
 
@@ -23,19 +17,25 @@ document.addEventListener("DOMContentLoaded", function () {
         const data = await apiRequest("/auth/sign_in", "POST", {
           email,
           password,
+          accountType: "individual", // 👈 Explicitly tell backend
         });
-        // backend should return { token, user } on success; check `data`
+
         if (data?.token) {
           localStorage.setItem("authToken", data.token);
           localStorage.setItem("user", JSON.stringify(data.user || {}));
-          alert("✅ Login successful!");
-          // Redirect based on account type (backend should return accountType or role)
-          const accountType = (data.user && data.user.accountType) || (data.user && data.user.role) || "individual";
-          if (typeof accountType === "string" && accountType.toLowerCase() === "business") {
-            window.location.href = "dashboard_business.html";
-          } else {
-            window.location.href = "dashboard_individual.html";
+
+          // Store user data for dashboard
+          if (data.user) {
+            localStorage.setItem("userId", data.user.id || data.user._id);
+            localStorage.setItem(
+              "userName",
+              data.user.name || data.user.fullName || data.user.email
+            );
+            localStorage.setItem("userType", "individual"); // 👈 Force individual
           }
+
+          alert("✅ Login successful!");
+          window.location.href = "dashboard_individual.html"; // 👈 Always go to individual dashboard
         } else {
           alert(`❌ ${data.message || "Invalid credentials"}`);
         }

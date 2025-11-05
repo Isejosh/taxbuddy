@@ -50,7 +50,7 @@
       </div>
 
       <div class="filters">
-         <select>
+        <select>
           <option selected disabled>Month</option>
           <option value="january">January</option>
           <option value="february">February</option>
@@ -74,54 +74,52 @@
       </div>
 
       <div class="paid-state">
-
         <div class="paid-top">
-            <p class="paid-top_head">October 2025</p>
-            <p class="paid-top_body paid_green">Paid</p>
+          <p class="paid-top_head">October 2025</p>
+          <p class="paid-top_body paid_green">Paid</p>
         </div>
 
         <div class="paid-middle">
-            <div class="paid-text">
-                <p class="paid-text_top">Income</p>
-                <p class="paid-text_bottom">₦500,000</p>
-            </div>
+          <div class="paid-text">
+            <p class="paid-text_top">Income</p>
+            <p class="paid-text_bottom">₦500,000</p>
+          </div>
 
-            <div class="paid-text">
-                <p class="paid-text_top">Tax Amount</p>
-                <p class="paid-text_bottom">₦100,000</p>
-            </div>
+          <div class="paid-text">
+            <p class="paid-text_top">Tax Amount</p>
+            <p class="paid-text_bottom">₦100,000</p>
+          </div>
         </div>
 
         <div class="paid-bottom paid-middle">
-            <div class="paid-text">
-                <p class="paid-text_top">Tax Rate</p>
-                <p class="paid-text_bottom">20.00%</p>
-            </div>
-            
-            <div class="paid-text">
-                <p class="paid-text_top">Paid On</p>
-                <p class="paid-text_bottom">10/23/2025</p>
-            </div>
+          <div class="paid-text">
+            <p class="paid-text_top">Tax Rate</p>
+            <p class="paid-text_bottom">20.00%</p>
+          </div>
+
+          <div class="paid-text">
+            <p class="paid-text_top">Paid On</p>
+            <p class="paid-text_bottom">10/23/2025</p>
+          </div>
         </div>
       </div>
     </div>
 
-   <!-- Mark as Paid Bottom Modal -->
-<div class="bottom_modal" id="paymentModal">
-  <div class="modal_content">
-    <h2>Mark as Paid</h2>
-    <p>Are you sure you want to mark this tax record as paid?</p>
+    <!-- Mark as Paid Bottom Modal -->
+    <div class="bottom_modal" id="paymentModal">
+      <div class="modal_content">
+        <h2>Mark as Paid</h2>
+        <p>Are you sure you want to mark this tax record as paid?</p>
 
-    <div class="modal_details">
-      <p><strong>Period:</strong> October 2025</p>
-      <p><strong>Amount:</strong> ₦2,000,000</p>
+        <div class="modal_details">
+          <p><strong>Period:</strong> October 2025</p>
+          <p><strong>Amount:</strong> ₦2,000,000</p>
+        </div>
+
+        <button class="confirm_btn" id="confirmPayment">Confirm Payment</button>
+        <button class="cancel_btn" id="closeModal">Cancel</button>
+      </div>
     </div>
-
-    <button class="confirm_btn" id="confirmPayment">Confirm Payment</button>
-    <button class="cancel_btn" id="closeModal">Cancel</button>
-  </div>
-</div>
-
 
     <!-- Footer Nav -->
     <nav class="bottom-nav">
@@ -148,29 +146,25 @@
     </nav>
 
     <!-- Success Toast -->
-<div class="toast" id="successToast">
-  ✅ Marked as paid successfully!
-</div>
-
-
+    <div class="toast" id="successToast">✅ Marked as paid successfully!</div>
 
     <script src="js/style.js"></script>
 
     <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("success") === "true") {
-      const toast = document.getElementById("successToast");
-      if (toast) {
-        toast.classList.add("show");
+      document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("success") === "true") {
+          const toast = document.getElementById("successToast");
+          if (toast) {
+            toast.classList.add("show");
 
-        // Hide after 3 seconds
-        setTimeout(() => {
-          toast.classList.remove("show");
-        }, 3000);
-      }
-    }
-  });
-</script>
+            // Hide after 3 seconds
+            setTimeout(() => {
+              toast.classList.remove("show");
+            }, 3000);
+          }
+        }
+      });
+    </script>
   </body>
 </html>

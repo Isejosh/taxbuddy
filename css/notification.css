@@ -1,216 +1,246 @@
 @import url(https://fonts.googleapis.com/css?family=Poppins:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic);
 
 * {
-    box-sizing: border-box;
-    margin: 0px;
-    padding: 0px;
-    user-select: none;
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  user-select: none;
 }
 
 :root {
-    /****************** COLORS **********************/
-    --primary: #367E34;
-    --bg-color: #E6F4E5;
-    --secondary: #F76D1B;
-    --success: #00C48C;
-    --error: #E63946;
-    --black: #212121;
-    --seven-five-black: #212121BF;
-    --five-zero-black: #21212180;
-    --two-five-black: #21212140;
-    --one-zero-black: #2121211A;
-    --zero-five-black: #2121211A;
-    --white: #fff;
+  /****************** COLORS **********************/
+  --primary: #367e34;
+  --bg-color: #e6f4e5;
+  --secondary: #f76d1b;
+  --success: #00c48c;
+  --error: #e63946;
+  --black: #212121;
+  --seven-five-black: #212121bf;
+  --five-zero-black: #21212180;
+  --two-five-black: #21212140;
+  --one-zero-black: #2121211a;
+  --zero-five-black: #2121211a;
+  --white: #fff;
 
-    /****************** FONT SIZES **********************/
-    --heading: 24px;
-    --body-medium: 16px;
-    --body-regular: 14px;
+  /****************** FONT SIZES **********************/
+  --heading: 24px;
+  --body-medium: 16px;
+  --body-regular: 14px;
 
-    --card-padding: 16px;
-    --card-radius: 20px;
-    --btn-radius: 8px;
+  --card-padding: 16px;
+  --card-radius: 20px;
+  --btn-radius: 8px;
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    background-color: var(--bg-color);
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  background-color: var(--bg-color);
 }
 
 p {
-    font-size: var(--body-regular);
+  font-size: var(--body-regular);
 }
 
 a {
-    text-decoration: none;
-    color: var(--black);
+  text-decoration: none;
+  color: var(--black);
 }
 
 .container {
-    background: var(--bg-color);
-    padding: 15px;
-    width: 90%;
-    max-width: 500px;
-    margin: auto;
-    position: relative;
+  background: var(--bg-color);
+  padding: 15px;
+  width: 90%;
+  max-width: 500px;
+  margin: auto;
+  position: relative;
 }
 
 /* Notification Header  */
 
 .notification-header {
-    margin-top: 15px;
+  margin-top: 15px;
 }
 
 .header-top {
-    display: flex;
-    gap: 20px;
-    align-items: center;
+  display: flex;
+  gap: 20px;
+  align-items: center;
 }
 
 .header-top h3 {
-    font-size: var(--heading);
-    font-weight: 500;
+  font-size: var(--heading);
+  font-weight: 500;
 }
 
 .notification-header p {
-    margin-top: 10px;
-    font-size: var(--body-regular);
+  margin-top: 10px;
+  font-size: var(--body-regular);
 }
 
 /* No Notification Display  */
 
 .notification-container {
-    margin: 50px 0;
-    background-color: var(--white);
-    height: 300px;
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 30px;
+  margin: 50px 0;
+  background-color: var(--white);
+  height: 300px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
 }
 
 .notification-display {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    font-size: var(--body-regular)
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  font-size: var(--body-regular);
 }
 
 .notification-display img {
-    align-self: center;
-    width: 64px;
-    height: 64px;
+  align-self: center;
+  width: 64px;
+  height: 64px;
 }
-
-
 
 /* Notification Messages Section */
 
 .notification-messages {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .btn-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .btn-container button {
-    padding: 10px;
-    border-radius: 8px;
-    font-size: var(--body-regular);
-    color: #F9FAFB;
-    border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: var(--body-regular);
+  color: #f9fafb;
+  border: none;
 }
 
 .read-btn {
-    background-color: var(--primary);
+  background-color: var(--primary);
 }
 
 .delete-btn {
-    background-color: #F00;
+  background-color: #f00;
 }
 
 .message-division {
-    background-color: #E6E6FF;
-    padding: 18px;
-    border-radius: 20px;
-    border: 1px solid var(--black);
-    margin: 30px 0px;
+  background-color: #e6e6ff;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid var(--black);
+  margin: 30px 0px;
 }
 
 .inner-btn {
-    display: flex;
-    font-size: var(--body-medium);
-    justify-content: space-between;
-    margin-bottom: 40px;
+  display: flex;
+  font-size: var(--body-medium);
+  justify-content: space-between;
+  margin-bottom: 40px;
 }
 
 .inner-btn .new {
-    color: #00F;
+  color: #00f;
 }
 
 .message-division .content {
-    font-size: var(--body-medium);
-    width: 80%;
+  font-size: var(--body-medium);
+  width: 80%;
 }
 
 .message-division .date-time {
-    margin-top: 5px;
-    color: #4A5565;
+  margin-top: 5px;
+  color: #4a5565;
 }
 
 /* Notification Reminder  */
 
 .notification-reminder {
-    background-color: #FEF0E8;
-    padding: 16px;
-    border-radius: 20px;
-    margin: 70px 0;
+  background-color: #fef0e8;
+  padding: 16px;
+  border-radius: 20px;
+  margin: 70px 0;
 }
 
 .notification-reminder h4 {
-    font-size: var(--card-radius);
-    font-weight: 500;
-    margin-bottom: 15px;
+  font-size: var(--card-radius);
+  font-weight: 500;
+  margin-bottom: 15px;
 }
 
 .notification-reminder p {
-    font-size: var(--body-regular);
-    line-height: 2;
+  font-size: var(--body-regular);
+  line-height: 2;
 }
-
 
 /* Footer Navigations. */
 
 .footer-nav {
-    background-color: #FFF;
-    height: 60px;
-    width: 100%;
-    position: fixed;
-    bottom: 0px;
-    right: 0px;
-    z-index: 1;
-    display: flex;
-    justify-content: space-around;
+  background-color: #fff;
+  height: 60px;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  z-index: 1;
+  display: flex;
+  justify-content: space-around;
 }
 
 .nav-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .nav-item img {
-    height: 20px;
-    margin-bottom: 6px;
+  height: 20px;
+  margin-bottom: 6px;
 }
 
 .nav-item p {
-    font-size: var(--body-regular);
+  font-size: var(--body-regular);
+}
+
+.new.unread {
+  background: #dc3545;
+  color: white;
+}
+
+.new.read {
+  background: #6c757d;
+  color: white;
+}
+
+.ph-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-container button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.inner-mark-as-read:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

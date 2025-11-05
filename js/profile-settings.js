@@ -30,11 +30,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-      const data = await apiRequest(`/auth/${accountType}/profile`, "PATCH", {
-        name: fullName,
-        income,
-        tin,
-      }, true);
+      const data = await apiRequest(
+        `/auth/${accountType}/profile`,
+        "PATCH",
+        {
+          name: fullName,
+          income,
+          tin,
+        },
+        true
+      );
 
       if (data.success) {
         alert("✅ Profile updated successfully!");
@@ -53,9 +58,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.setItem("taxReminderEnabled", isEnabled);
 
     try {
-      const data = await apiRequest("/auth/preferences/reminders", "PUT", {
-        tax_reminder: isEnabled,
-      }, true);
+      const data = await apiRequest(
+        "/auth/preferences/reminders",
+        "PUT",
+        {
+          tax_reminder: isEnabled,
+        },
+        true
+      );
 
       if (data.success) {
         console.log("🔔 Reminder preference updated on server");
@@ -78,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (confirmDelete) {
       try {
-  const data = await apiRequest("/auth/profile", "DELETE", null, true);
+        const data = await apiRequest("/auth/profile", "DELETE", null, true);
 
         if (data.success) {
           alert("🗑️ Account deleted successfully.");

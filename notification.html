@@ -1,68 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Notifications</title>
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-    <link rel="stylesheet" href="css/notification.css">
-    <link rel="stylesheet" href="css/calculateTax.css">
-    <link rel="stylesheet" href="css/style.css">
-
-</head>
-
-<body>
-
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
+    />
+    <link rel="stylesheet" href="css/notification.css" />
+    <link rel="stylesheet" href="css/calculateTax.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
     <div class="container">
-        <div class="notification-header">
-            <div class="header-top">
-                <a href="#" class="auth-back">
-                  <i class="ph ph-arrow-left"></i>
-                </a>
-                <h3>Notifications</h3>
-            </div>
-            <p>All caught up!</p>
+      <div class="notification-header">
+        <div class="header-top">
+          <a href="dashboard_business.html" class="auth-back">
+            <i class="ph ph-arrow-left"></i>
+          </a>
+          <h3>Notifications</h3>
         </div>
+        <p id="headerStatus">All caught up!</p>
+      </div>
 
-        <div class="notification-container">
-            <div class="notification-display">
-                <img src="icons/notification.svg" alt="">
-                <p>No notifications yet</p>
-                <p>You'll see tax reminders and updates here</p>
-            </div>
+      <!-- Empty State (shown when no notifications) -->
+      <div class="notification-container" id="emptyState">
+        <div class="notification-display">
+          <img src="icons/notification.svg" alt="" />
+          <p>No notifications yet</p>
+          <p>You'll see tax reminders and updates here</p>
         </div>
+      </div>
+
+      <!-- Notifications List (shown when there are notifications) -->
+      <div
+        class="notification-messages"
+        id="notificationsList"
+        style="display: none"
+      >
+        <!-- Dynamic content will be inserted here by JavaScript -->
+      </div>
     </div>
 
-
-
-<!-- Footer Nav -->
+    <!-- Footer Nav -->
     <nav class="bottom-nav">
-  <a href="dashboard_business.html" class="nav-item active">
-    <i class="ph ph-house"></i>
-    <span>Home</span>
-  </a>
-  <a href="calculateTax.html" class="nav-item">
-    <i class="ph ph-calculator"></i>
-    <span>Calculator</span>
-  </a>
-  <a href="#" class="nav-item">
-    <i class="ph ph-clock"></i>
-    <span>History</span>
-  </a>
-  <a href="#" class="nav-item">
-    <i class="ph ph-bell-simple-ringing"></i>
-    <span>Alerts</span>
-  </a>
-  <a href="#" class="nav-item">
-    <i class="ph ph-user"></i>
-    <span>Profile</span>
-  </a>
-</nav>
-</body>
+      <a href="dashboard_business.html" class="nav-item">
+        <i class="ph ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="calculateTax.html" class="nav-item">
+        <i class="ph ph-calculator"></i>
+        <span>Calculator</span>
+      </a>
+      <a href="tax-history.html" class="nav-item">
+        <i class="ph ph-clock"></i>
+        <span>History</span>
+      </a>
+      <a href="notification.html" class="nav-item active">
+        <i class="ph ph-bell-simple-ringing"></i>
+        <span>Alerts</span>
+      </a>
+      <a href="profile-settings.html" class="nav-item">
+        <i class="ph ph-user"></i>
+        <span>Profile</span>
+      </a>
+    </nav>
 
+    <script src="js/api.js"></script>
+    <script src="js/notification.js"></script>
+  </body>
 </html>

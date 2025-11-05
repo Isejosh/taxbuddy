@@ -20,21 +20,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Get token from localStorage or URL
-    const token = localStorage.getItem("resetToken") || new URLSearchParams(window.location.search).get("token");
+    const token =
+      localStorage.getItem("resetToken") ||
+      new URLSearchParams(window.location.search).get("token");
 
     if (!token) {
-      alert("Reset token not found. Please restart the password reset process.");
+      alert(
+        "Reset token not found. Please restart the password reset process."
+      );
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/reset_password/${token}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password }),
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/auth/reset_password/${token}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ password }),
+        }
+      );
 
       const data = await response.json();
 

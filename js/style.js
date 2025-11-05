@@ -1,5 +1,5 @@
 // Pop up screen
-   window.addEventListener("load", function() {
+window.addEventListener("load", function () {
   const splash = document.getElementById("splash_screen");
   const main = document.getElementById("main_content");
 
@@ -13,18 +13,16 @@
   }, 3500); // splash stays for 3.5 seconds
 });
 
-
-
 // onboarding.js
-const slides = document.querySelectorAll('.onboarding_slide');
-const dots = document.querySelectorAll('.dot');
-const buttons = document.querySelectorAll('.onboarding_btn');
+const slides = document.querySelectorAll(".onboarding_slide");
+const dots = document.querySelectorAll(".dot");
+const buttons = document.querySelectorAll(".onboarding_btn");
 let current = 0;
 
 buttons.forEach((btn, index) => {
-  btn.addEventListener('click', () => {
-    slides[current].classList.remove('active');
-    dots[current].classList.remove('active');
+  btn.addEventListener("click", () => {
+    slides[current].classList.remove("active");
+    dots[current].classList.remove("active");
 
     // If it's the last slide, go to login
     if (current === slides.length - 1) {
@@ -33,13 +31,13 @@ buttons.forEach((btn, index) => {
     }
 
     current++;
-    slides[current].classList.add('active');
-    dots[current].classList.add('active');
+    slides[current].classList.add("active");
+    dots[current].classList.add("active");
   });
 });
 
 //Verify Movement
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const inputs = document.querySelectorAll(".otp_input");
 
   inputs.forEach((input, index) => {
@@ -66,12 +64,11 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-
 //Password
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const toggleButtons = document.querySelectorAll(".password-toggle");
 
-  toggleButtons.forEach(toggle => {
+  toggleButtons.forEach((toggle) => {
     toggle.addEventListener("click", () => {
       const input = toggle.previousElementSibling;
       const isPassword = input.type === "password";
@@ -84,30 +81,29 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-
 // Mark as Paid Pop up
-  
-  const openModal = document.getElementById("openModal");
-  const closeModal = document.getElementById("closeModal");
-  const confirmPayment = document.getElementById("confirmPayment");
-  const modal = document.getElementById("paymentModal");
 
-  // Open modal
-  openModal.addEventListener("click", () => {
-    modal.style.display = "flex";
-  });
+const openModal = document.getElementById("openModal");
+const closeModal = document.getElementById("closeModal");
+const confirmPayment = document.getElementById("confirmPayment");
+const modal = document.getElementById("paymentModal");
 
-  // Close modal
-  closeModal.addEventListener("click", () => {
-    modal.style.display = "none";
-  });
+// Open modal
+openModal.addEventListener("click", () => {
+  modal.style.display = "flex";
+});
 
-  // Redirect to paid page
-  confirmPayment.addEventListener("click", () => {
-    window.location.href = "tax-history_paid.html?success=true";
-  });
+// Close modal
+closeModal.addEventListener("click", () => {
+  modal.style.display = "none";
+});
 
-  // Close modal if clicked outside
-  window.addEventListener("click", (e) => {
-    if (e.target === modal) modal.style.display = "none";
-  });
+// Redirect to paid page
+confirmPayment.addEventListener("click", () => {
+  window.location.href = "tax-history_paid.html?success=true";
+});
+
+// Close modal if clicked outside
+window.addEventListener("click", (e) => {
+  if (e.target === modal) modal.style.display = "none";
+});

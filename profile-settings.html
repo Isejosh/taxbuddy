@@ -14,7 +14,7 @@
       type="text/css"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
     />
-    <link rel="stylesheet" href="profile-settings.css" />
+    <link rel="stylesheet" href="css/profile-settings.css" />
     <link rel="stylesheet" href="css/calculateTax.css" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
@@ -37,12 +37,17 @@
         <div class="act-info-form">
           <div class="form-group">
             <label for="accountType">Account Type</label>
-            <input type="text" placeholder="Individual" disabled id="accountType" />
+            <input
+              type="text"
+              placeholder="Individual"
+              disabled
+              id="accountType"
+            />
             <p>Account type cannot be changed</p>
           </div>
           <div class="form-group">
             <label for="fullName">Full Name</label>
-            <input type="text" placeholder="Samuel James" id="fullName"/>
+            <input type="text" placeholder="Samuel James" id="fullName" />
           </div>
 
           <div class="select-btn">
@@ -60,16 +65,14 @@
 
           <div class="form-group">
             <label for="tin">Tax Identification Number (TIN)</label>
-            <input type="text" placeholder="Enter your TIN" id="tin"/>
+            <input type="text" placeholder="Enter your TIN" id="tin" />
           </div>
         </div>
       </form>
       <!-- Account Security -->
       <section class="acct-sec-container">
         <h2>Account Security</h2>
-        <a href="change-password.html" class="change-pwrd"
-          >Change Password</a
-        >
+        <a href="change-password.html" class="change-pwrd">Change Password</a>
       </section>
 
       <!-- Preference -->
@@ -83,7 +86,7 @@
             </p>
           </div>
           <label for="taxToggle" class="switch">
-            <input type="checkbox" id="taxToggle"/>
+            <input type="checkbox" id="taxToggle" />
             <span class="slider"></span>
           </label>
         </div>

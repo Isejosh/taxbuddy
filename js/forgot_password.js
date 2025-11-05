@@ -16,7 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.disabled = true;
 
     try {
-      const response = await apiRequest("/auth/forgot_password", "POST", { email });
+      const response = await apiRequest("/auth/forgot_password", "POST", {
+        email,
+      });
 
       if (response.success) {
         // Save email to localStorage for next page (verify)
@@ -27,7 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // redirect to verification page
         window.location.href = "verify-reset.html";
       } else {
-        alert(response.message || "⚠️ Unable to send reset code. Please try again.");
+        alert(
+          response.message || "⚠️ Unable to send reset code. Please try again."
+        );
       }
     } catch (err) {
       alert("⚠️ Server connection error. Please try again later.");

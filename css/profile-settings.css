@@ -1,0 +1,299 @@
+@import url(https://fonts.googleapis.com/css?family=Poppins:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic);
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html{
+    font-size: 62.5%;
+}
+:root{
+    /****************** COLORS **********************/
+    --primary: #367E34;
+    --bg-color: #E6F4E5;
+    --secondary: #F76D1B;
+    --success: #00C48C;
+    --error: #E63946;
+    --black: #212121;
+    --seven-five-black: #212121BF;
+    --five-zero-black: #21212180;
+    --two-five-black: #21212140;
+    --one-zero-black: #2121211A;
+    --zero-five-black: #2121211A;
+    --white: #fff;
+
+    /****************** FONT SIZES **********************/
+    --heading: 24px;
+    --body-medium: 16px;
+    --body-regular: 14px;
+
+    --btn-padding: 1rem 2rem;
+    --card-padding: 16px;
+    --card-radius: 20px;
+    --input-radius: 4px;
+    --btn-radius: 8px;
+    --input-padding: 10px 16px;
+}
+body{
+     font-family: 'poppins';
+    background-color: var(--bg-color);
+    width: 100vw;
+    padding-top: 3rem;
+    overflow-x: hidden;
+    font-size: var(--body-medium);
+}
+main{
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    width: 90%;
+    max-width: 500px;
+}
+
+.heading{
+    display: flex;
+    flex-direction: column;
+    font-size: var(--body-medium);
+    color: var(--black);
+}
+.header-text{
+    display: inline-flex;
+    gap: 2rem;
+    align-items: center;
+    font-size: var(--heading);
+}
+.back-arrow{
+    font-size: 4rem;
+    text-decoration: none;
+    color: black;
+    
+}
+.head-text{
+    color: var(--five-zero-black);
+    font-size: 2.0rem;
+}
+
+/* ACCOUNT INFORMATION */
+.acct-info-container{
+     background-color: var(--white);
+    padding: var(--card-padding);
+    border-radius: var(--card-radius);
+    border: 1px solid var(--two-five-black);
+    margin-top: 4rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+}
+.acct-info-container h2{
+    margin-bottom: 4rem;
+}
+.act-info-form{
+    display: flex;
+    flex-direction: column;
+    gap: 2.8rem;
+
+}
+.form-group > label {
+    display: block;
+    margin-bottom: 0.625rem;
+    font-weight: 500;
+}
+.form-group > input {
+    display: block;
+    padding: var(--input-padding);
+    border-radius: var(--input-radius);
+    border: 1px solid var(--two-five-black);
+    width: 100%;
+}
+.form-group > p{
+    color: var(--error);
+}
+.select-btn{
+    display: block;
+    width: 100%;
+    background-color: var(--secondary);
+    border: none;
+    border-radius: var(--btn-radius);
+    padding: var(--btn-padding);
+    text-align: center;
+    /* cursor: pointer; */
+}
+
+select{
+    border: none;
+    outline: none;
+    width: 100%;
+    text-align: center;
+    background-color: var(--secondary);
+    color: var(--white);
+    border-radius: var(--btn-radius);
+    padding: var(--btn-padding);
+    cursor: pointer;
+}
+
+/* Account Security */
+.acct-sec-container{
+    background-color:var(--white);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-top: 4rem;
+    margin-bottom: 7rem;
+    padding: var(--card-padding);
+    border-radius: var(--card-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.change-pwrd{
+    text-decoration: none;
+    color: var(--black);
+}
+
+
+
+/* Preference */
+.preference-card{
+   background-color: var(--white); 
+   border-radius: var(--card-radius);
+   padding: var(--card-padding);
+   width: 100%;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.preference-card > h2 {
+    margin-bottom: 5rem;
+}
+.preference-item{
+    display: flex;
+    justify-content: space-between;
+    /* align-items: center; */
+}
+.preference-text{
+    /* margin-top: 0.625rem; */
+    flex-grow: 1;
+}
+.switch-label{
+    margin: 0;
+    font-weight: bold;
+  
+}
+.switch-descripton{
+    margin-top: 0.625rem;
+}
+
+/* kindly reaccess this section */
+/* Toggle Switch CSS */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 25px;
+}
+
+/* Hide default checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  cursor: pointer;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 20px; /* Added for rounded track */
+}
+
+/* The circle */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 21px;
+  width: 21px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+/* When checked */
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+/* Move the circle */
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Button */
+.save-btn{
+    display: block;
+    width: 100%;
+    padding: var(--btn-padding);
+    border: none;
+    border-radius: var(--btn-radius);
+    background-color: var(--primary);
+    color: var(--white);
+    margin-top: 3rem;
+    cursor: pointer;
+    font-size: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.logout-btn{
+    display: block;
+    width: 100%;
+    padding: var(--btn-padding);
+    border: 1px solid var(--primary);
+    border-radius: var(--btn-radius);
+    color: var(--white);
+    margin-top: 3rem;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+}
+.abt-tax-container{
+    background-color:rgb(245, 216, 177);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-top: 4rem;
+    margin-bottom: 7rem;
+    padding: var(--card-padding);
+    border-radius: var(--card-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.abt-tax-container > h2 {
+    padding-left: 14px;
+
+}
+.abt-tax-text{
+    padding-left: 14px;
+    
+}
+ /* Reset Password */
+.pword-reset-container{
+
+    background-color: var(--white);
+    padding: var(--card-padding);
+    border-radius: var(--card-radius);
+    border: 1px solid var(--two-five-black);
+    margin-top: 4rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.pword-reset-container > h2 {
+    margin-bottom: 1rem;
+    
+}
+
+.reset-text {
+    padding-left: 14px;
+    margin-bottom: 3rem;
+}
