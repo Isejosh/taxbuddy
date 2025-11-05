@@ -36,16 +36,17 @@
         <h2>Account information</h2>
         <div class="act-info-form">
           <div class="form-group">
-            <label for="">Account Type</label>
-            <input type="text" placeholder="Individual" />
+            <label for="accountType">Account Type</label>
+            <input type="text" placeholder="Individual" disabled id="accountType" />
             <p>Account type cannot be changed</p>
           </div>
           <div class="form-group">
-            <label for="">Full Name</label>
-            <input type="text" placeholder="Samuel James" />
+            <label for="fullName">Full Name</label>
+            <input type="text" placeholder="Samuel James" id="fullName"/>
           </div>
+
           <div class="select-btn">
-            <select name="" id="select-range">
+            <select name="" id="incomeRange">
               <option value="" disabled selected>Select Range</option>
               <option value="hundred">N0 - N100,000</option>
               <option value="three-hundred">N100,000 - N300,000</option>
@@ -58,15 +59,15 @@
           </div>
 
           <div class="form-group">
-            <label for="">Tax Identification Number (TIN)</label>
-            <input type="text" placeholder="Enter your TIN" />
+            <label for="tin">Tax Identification Number (TIN)</label>
+            <input type="text" placeholder="Enter your TIN" id="tin"/>
           </div>
         </div>
       </form>
       <!-- Account Security -->
       <section class="acct-sec-container">
         <h2>Account Security</h2>
-        <a href="profile-setting-pwrd-reset.html" class="change-pwrd"
+        <a href="change-password.html" class="change-pwrd"
           >Change Password</a
         >
       </section>
@@ -81,7 +82,7 @@
               Get notified about upcoming tax payment due dates
             </p>
           </div>
-          <label for="" class="switch">
+          <label for="taxToggle" class="switch">
             <input type="checkbox" id="taxToggle"/>
             <span class="slider"></span>
           </label>
@@ -128,5 +129,8 @@
         <span>Profile</span>
       </a>
     </nav>
+
+    <script src="js/api.js"></script>
+    <script src="js/profile-settings.js"></script>
   </body>
 </html>

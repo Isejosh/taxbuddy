@@ -67,8 +67,9 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.setItem("email", email);
       localStorage.setItem("accountType", formType.toLowerCase());
 
-      alert("✅ Signup successful! Verification code sent to your email.");
-      window.location.href = "verify.html";
+  alert("✅ Signup successful! Verification code sent to your email.");
+  // navigate to existing verification page
+  window.location.href = "verify-code.html";
 
     } catch (error) {
       console.error("Signup error:", error);

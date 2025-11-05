@@ -29,7 +29,13 @@ document.addEventListener("DOMContentLoaded", function () {
           localStorage.setItem("authToken", data.token);
           localStorage.setItem("user", JSON.stringify(data.user || {}));
           alert("✅ Login successful!");
-          window.location.href = "dashboard.html";
+          // Redirect based on account type (backend should return accountType or role)
+          const accountType = (data.user && data.user.accountType) || (data.user && data.user.role) || "individual";
+          if (typeof accountType === "string" && accountType.toLowerCase() === "business") {
+            window.location.href = "dashboard_business.html";
+          } else {
+            window.location.href = "dashboard_individual.html";
+          }
         } else {
           alert(`❌ ${data.message || "Invalid credentials"}`);
         }

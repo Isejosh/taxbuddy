@@ -41,7 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         alert("Password reset successful! You can now log in.");
         localStorage.removeItem("resetToken");
-        window.location.href = "login.html";
+        // redirect to index (choose account) — login.html does not exist
+        window.location.href = "index.html";
       } else {
         alert(data.message || "Failed to reset password. Try again.");
       }
