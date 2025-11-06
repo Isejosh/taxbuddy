@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!userId || !token) {
         alert("⚠️ Please log in again.");
-        window.location.href = "individual-login.html";
+        window.location.href = "login.html";
         return;
       }
 

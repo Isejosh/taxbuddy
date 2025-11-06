@@ -1,20 +1,21 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const individualForm = document.getElementById("individualSignupForm");
-  const businessForm = document.getElementById("businessSignupForm");
+  const individualForm = document.querySelector("#individualForm form");
+  const businessForm = document.querySelector("#businessForm form");
 
-  // 🔹 Helper function
-  async function handleSignup(formType, endpoint) {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const income = document.getElementById("income")
-      ? document.getElementById("income").value
+  // ✅ Helper function to handle signup
+  async function handleSignup(form, formType, endpoint) {
+    const name = form.querySelector("#name").value.trim();
+    const email = form.querySelector("#email").value.trim();
+    const income = form.querySelector("#income")
+      ? form.querySelector("#income").value
       : "";
-    const password = document.getElementById("password").value.trim();
-    const confirmPassword = document
-      .getElementById("confirm-password")
+    const password = form.querySelector("#password").value.trim();
+    const confirmPassword = form
+      .querySelector("#confirm-password")
       .value.trim();
-    const terms = document.getElementById("terms").checked;
+    const terms = form.querySelector("#terms").checked;
 
+    // 🔹 Validation
     if (!name || !email || !password || !confirmPassword) {
       alert("⚠️ Please fill in all required fields.");
       return;
@@ -41,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      // Register User
+      // 🔸 Register user
       const data = await apiRequest(`/auth/sign_up/${endpoint}`, "POST", {
         name,
         email,
@@ -54,19 +55,18 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      //Send Otp
+      // 🔸 Send OTP
       const otpData = await apiRequest("/auth/send_otp", "POST", { email });
       if (!otpData || !otpData.success) {
         alert(`❌ ${otpData?.message || "Failed to send OTP."}`);
         return;
       }
 
-      // Save email & account type to localStorage for verification page
+      // 🔸 Save info for verification
       localStorage.setItem("email", email);
       localStorage.setItem("accountType", formType.toLowerCase());
 
       alert("✅ Signup successful! Verification code sent to your email.");
-      // navigate to existing verification page
       window.location.href = "verify-code.html";
     } catch (error) {
       console.error("Signup error:", error);
@@ -74,19 +74,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // 🔸 Individual signup form
+  // ✅ Individual form listener
   if (individualForm) {
     individualForm.addEventListener("submit", function (e) {
       e.preventDefault();
-      handleSignup("Individual", "individual");
+      handleSignup(individualForm, "Individual", "individual");
     });
   }
 
-  // 🔸 Business signup form
+  // ✅ Business form listener
   if (businessForm) {
     businessForm.addEventListener("submit", function (e) {
       e.preventDefault();
-      handleSignup("Business", "business");
+      handleSignup(businessForm, "Business", "business");
     });
   }
 });

@@ -32,7 +32,7 @@
 
       <!-- Form -->
       <div class="login_form-container">
-        <form action="" class="login_form">
+        <form action="" class="login_form" id="loginForm">
           <div class="login_field">
             <label for="email" class="login_label">Email</label>
             <input
@@ -41,6 +41,7 @@
               class="login_input"
               placeholder="example@gmail.com"
             />
+            <small class="error_msg"></small>
           </div>
 
           <div class="login_field password-field">
@@ -54,6 +55,7 @@
               />
               <i class="ph ph-eye password-toggle"></i>
             </div>
+            <small class="error_msg"></small>
           </div>
 
           <a href="forgot-password.html" class="login_forgot"
@@ -87,13 +89,13 @@
         <!-- Signup -->
         <p class="login_signup-text">
           Don't have an account?
-          <a href="business-signup.html" class="signup_link">Sign Up</a>
+          <a href="signup.html" class="signup_link">Sign Up</a>
         </p>
       </div>
     </div>
 
     <script src="js/style.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/business-login.js"></script>
+    <script src="js/login.js"></script>
   </body>
 </html>
