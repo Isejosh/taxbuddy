@@ -1,33 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("loginForm");
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
+  const loginForm = document.getElementById("loginForm");
 
-  const BASE_URL = "http://localhost:5000/api";
-
-  // ✅ Reusable API helper
-  async function apiRequest(endpoint, method, body = null) {
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    if (body) {
-      options.body = JSON.stringify(body);
-    }
-
-    const response = await fetch(`${BASE_URL}${endpoint}`, options);
-    return response.json();
-  }
-
-  // ✅ Handle login
-  form.addEventListener("submit", async (e) => {
+  loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
     if (!email || !password) {
       alert("⚠️ Please enter both email and password.");
@@ -35,32 +13,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const data = await apiRequest("/auth/sign_in", "POST", {
-        email,
-        password,
-      });
+      const data = await apiRequest("/auth/sign_in", "POST", { email, password });
 
       if (!data.success) {
-        alert(`❌ ${data.message || "Login failed. Try again."}`);
+        alert(`❌ ${data.message || "Invalid credentials."}`);
         return;
       }
 
-      // Save login info
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("accountType", data.accountType); // "individual" or "business"
-      localStorage.setItem("userId", data.user?._id || data.userId);
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("accountType", data.user.accountType || "individual");
 
       alert("✅ Login successful!");
 
       // Redirect based on account type
-      if (data.accountType === "business") {
-        window.location.href = "dashboard_business.html";
+      if (data.user.accountType === "business") {
+        window.location.href = "business-dashboard.html";
       } else {
-        window.location.href = "dashboard_individual.html";
+        window.location.href = "individual-dashboard.html";
       }
+
     } catch (error) {
       console.error("Login error:", error);
-      alert("⚠️ Server connection error. Please try again later.");
+      alert("⚠️ Server error. Try again later.");
     }
   });
 });

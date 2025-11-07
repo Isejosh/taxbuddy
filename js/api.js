@@ -1,30 +1,22 @@
 const BASE_URL = "http://localhost:5000/api";
 
-// 🔐 Save token after login
-function saveToken(token) {
-  localStorage.setItem("authToken", token);
-}
-
-// 🔐 Get token for protected routes
-function getToken() {
-  return localStorage.getItem("authToken");
-}
-
-// 🧾 Generalized API request helper
-async function apiRequest(endpoint, method = "GET", data = null, auth = false) {
+async function apiRequest(endpoint, method = "GET", body = null, auth = false) {
   const headers = { "Content-Type": "application/json" };
-  if (auth) headers["Authorization"] = `Bearer ${getToken()}`;
 
-  const options = {
-    method,
-    headers,
-  };
-
-  if (data) {
-    options.body = JSON.stringify(data);
+  if (auth) {
+    const token = localStorage.getItem("authToken");
+    if (token) headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${BASE_URL}${endpoint}`, options);
-  const result = await res.json();
-  return result;
+  const options = { method, headers };
+  if (body) options.body = JSON.stringify(body);
+
+  try {
+    const response = await fetch(`${BASE_URL}${endpoint}`, options);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("API request error:", error);
+    return { success: false, message: "Server connection failed" };
+  }
 }
