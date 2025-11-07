@@ -1,109 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Tax History</title>
+
     <link
       rel="stylesheet"
-      type="text/css"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
     />
     <link
       rel="stylesheet"
-      type="text/css"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
     />
+
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/calculateTax.css" />
+
+    <style>
+      .filters { display:flex; gap:12px; margin:16px 0; }
+      .status-tabs { display:flex; gap:8px; margin:8px 0 16px; }
+      .tab { padding:8px 12px; border-radius:8px; cursor:pointer; }
+      .tab.active { background:#0ea5a1; color:#fff; }
+      .records-container { display:flex; flex-direction:column; gap:12px; margin-top:12px; }
+      .paid-state { background:#fff; padding:12px; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+      .paid-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+      .paid-top_body.paid_green { color:#059669; font-weight:600; }
+      .paid-middle { display:flex; gap:12px; margin-bottom:8px; }
+      .paid-text { flex:1; }
+      .paid-btn { margin-top:8px; padding:8px 10px; border-radius:8px; cursor:pointer; border:none; background:#0ea5a1; color:#fff; }
+      .bottom_modal { position:fixed; left:0; right:0; bottom:-100%; background:#fff; transition:bottom .2s ease; box-shadow:0 -6px 20px rgba(0,0,0,.15); padding:16px; border-top-left-radius:12px; border-top-right-radius:12px; }
+      .bottom_modal.show { bottom:0; }
+      .toast { position:fixed; right:14px; top:14px; background:#16a34a; color:#fff; padding:10px 14px; border-radius:10px; display:none; }
+      .toast.show { display:block; }
+      .empty-state { display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center; padding:24px; text-align:center; }
+    </style>
   </head>
+
   <body>
     <div class="container">
       <div class="container-top">
-        <a href="#" class="auth-back">
-          <i class="ph ph-arrow-left"></i>
-        </a>
-
+        <a href="dashboard_business.html" class="auth-back"><i class="ph ph-arrow-left"></i></a>
         <div class="container-top_text">
           <h2 class="container-top_text-heading">Tax History</h2>
         </div>
       </div>
+
       <p class="subtitle">Track and manage your tax payment records</p>
 
-      <div class="card-container">
-        <div class="card">
-          <h3>Total Records</h3>
-          <p>0</p>
-        </div>
-        <div class="card paid">
-          <h3>Paid</h3>
-          <p>0</p>
-        </div>
-        <div class="card unpaid">
-          <h3>Unpaid</h3>
-          <p>0</p>
-        </div>
-        <div class="card amount">
-          <h3>Paid Amount</h3>
-          <p>₦0</p>
-        </div>
+      <div class="card-container" id="summary-cards" style="margin-top:10px">
+        <div class="card"><h3>Total Records</h3><p id="totalRecords">0</p></div>
+        <div class="card paid"><h3>Paid</h3><p id="paidCount">0</p></div>
+        <div class="card unpaid"><h3>Unpaid</h3><p id="unpaidCount">0</p></div>
+        <div class="card amount"><h3>Paid Amount</h3><p id="paidAmount">₦0</p></div>
       </div>
 
       <div class="filters">
-        <select>
-          <option selected disabled>Month</option>
-          <option value="january">January</option>
-          <option value="february">February</option>
-          <option value="march">March</option>
-          <option value="april">April</option>
-          <option value="may">May</option>
-          <option value="june">June</option>
-          <option value="july">July</option>
-          <option value="august">August</option>
-          <option value="september">September</option>
-          <option value="october">October</option>
-          <option value="november">November</option>
-          <option value="december">December</option>
+        <select id="monthFilter" aria-label="Month filter">
+          <option value="">All months</option>
+          <option value="01">January</option>
+          <option value="02">February</option>
+          <option value="03">March</option>
+          <option value="04">April</option>
+          <option value="05">May</option>
+          <option value="06">June</option>
+          <option value="07">July</option>
+          <option value="08">August</option>
+          <option value="09">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
         </select>
-        <select>
+
+        <select id="yearFilter" aria-label="Year filter">
+          <option value="">All years</option>
           <option value="2023">2023</option>
           <option value="2024">2024</option>
           <option value="2025" selected>2025</option>
           <option value="2026">2026</option>
         </select>
+
+        <div style="margin-left:auto" class="status-tabs" role="tablist">
+          <div class="tab active" data-status="">All</div>
+          <div class="tab" data-status="paid">Paid</div>
+          <div class="tab" data-status="unpaid">Unpaid</div>
+        </div>
       </div>
 
-      <div class="empty-state">
-        <i class="ph ph-calendar-dots empty-state_calendar"></i>
-        <p>Enter your income and tap calculate to view your tax breakdown.</p>
-        <button onclick="window.location.href='calculateTax.html'">
-          Calculate Your First Tax
-        </button>
+      <div class="empty-state" id="emptyState">
+        <i class="ph ph-calendar-dots empty-state_calendar" style="font-size:40px"></i>
+        <p id="emptyText">Enter your income and tap calculate to view your tax breakdown.</p>
+        <button onclick="window.location.href='calculateTax.html'">Calculate Your First Tax</button>
+      </div>
+
+      <div id="recordsContainer" class="records-container" style="display:none"></div>
+    </div>
+
+    <div class="bottom_modal" id="paymentModal" aria-hidden="true">
+      <div class="modal_content">
+        <h2>Mark as Paid</h2>
+        <p>Are you sure you want to mark this tax record as paid?</p>
+        <div class="modal_details">
+          <p><strong>Period:</strong> <span id="modalPeriod"></span></p>
+          <p><strong>Amount:</strong> <span id="modalAmount"></span></p>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:12px">
+          <button class="confirm_btn paid-btn" id="confirmPayment">Confirm Payment</button>
+          <button class="cancel_btn" id="closeModal">Cancel</button>
+        </div>
       </div>
     </div>
 
-    <!-- Footer Nav -->
+    <div class="toast" id="successToast">✅ Marked as paid successfully!</div>
+
     <nav class="bottom-nav">
-      <a href="dashboard_business.html" class="nav-item active">
-        <i class="ph ph-house"></i>
-        <span>Home</span>
-      </a>
-      <a href="calculateTax.html" class="nav-item">
-        <i class="ph ph-calculator"></i>
-        <span>Calculator</span>
-      </a>
-      <a href="tax-history.html" class="nav-item">
-        <i class="ph ph-clock"></i>
-        <span>History</span>
-      </a>
-      <a href="notification.html" class="nav-item">
-        <i class="ph ph-bell-simple-ringing"></i>
-        <span>Alerts</span>
-      </a>
-      <a href="profile-settings.html" class="nav-item">
-        <i class="ph ph-user"></i>
-        <span>Profile</span>
-      </a>
+      <a href="dashboard_business.html" class="nav-item"><i class="ph ph-house"></i><span>Home</span></a>
+      <a href="calculateTax.html" class="nav-item"><i class="ph ph-calculator"></i><span>Calculator</span></a>
+      <a href="tax-history.html" class="nav-item active"><i class="ph ph-clock"></i><span>History</span></a>
+      <a href="notification.html" class="nav-item"><i class="ph ph-bell-simple-ringing"></i><span>Alerts</span></a>
+      <a href="profile-settings.html" class="nav-item"><i class="ph ph-user"></i><span>Profile</span></a>
     </nav>
 
     <script src="js/tax-history.js"></script>
