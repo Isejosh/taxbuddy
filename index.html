@@ -23,38 +23,40 @@
   <div id="loading">Loading...</div>
   <div id="app"></div>
 
-  <script>
-    const isMobile = window.innerWidth <= 900;
-    const app = document.getElementById('app');
-    const loader = document.getElementById('loading');
-    
-    // pick which file to load
-    const page = isMobile ? './index-mobile.html' : './index-desktop.html';
+ <script>
+  const isMobile = window.innerWidth <= 768;
+  const app = document.getElementById('app');
+  const loader = document.getElementById('loading');
 
-    fetch(page)
-  .then(res => res.text())
-  .then(html => {
-    loader.style.display = 'none';
-    app.innerHTML = html;
+  const page = isMobile ? 'index-mobile.html' : 'index-desktop.html';
 
-    // re-run scripts inside the loaded HTML
-    const scripts = app.querySelectorAll('script');
-    scripts.forEach(oldScript => {
-      const newScript = document.createElement('script');
-      if (oldScript.src) {
-        newScript.src = oldScript.src;
-      } else {
-        newScript.textContent = oldScript.textContent;
-      }
-      document.body.appendChild(newScript);
-      oldScript.remove();
+  fetch(page)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.text();
+    })
+    .then(html => {
+      loader.style.display = 'none';
+      app.innerHTML = html;
+
+      // Find and run any external scripts
+      const scripts = app.querySelectorAll('script');
+      scripts.forEach(oldScript => {
+        const newScript = document.createElement('script');
+        if (oldScript.src) {
+          newScript.src = oldScript.getAttribute('src');
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        document.body.appendChild(newScript);
+        oldScript.remove();
+      });
+    })
+    .catch(err => {
+      loader.textContent = 'Error loading page 😢';
+      console.error('Fetch failed:', err);
     });
-  })
-  .catch(err => {
-    loader.textContent = 'Error loading page 😢';
-    console.error(err);
-  });
+</script>
 
-  </script>
 </body>
 </html>
