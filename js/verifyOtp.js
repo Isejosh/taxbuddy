@@ -1,24 +1,105 @@
+// verifyOtp.js - Fixed
 document.addEventListener("DOMContentLoaded", () => {
-  const verifyForm = document.getElementById("verifyForm");
+  const verifyBtn = document.querySelector(".verify_btn");
+  const resendLink = document.querySelector(".resend_link");
+  const otpInputs = document.querySelectorAll(".otp_input");
+  const emailSpan = document.querySelector(".verify_email");
 
-  verifyForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // Get email from localStorage
+  const email = localStorage.getItem("email");
+  
+  if (!email) {
+    alert("❌ Email not found. Please sign up again.");
+    window.location.href = "signup.html";
+    return;
+  }
 
-    const email = localStorage.getItem("email");
-    const otp = document.getElementById("otp").value.trim();
+  // Display email
+  if (emailSpan) {
+    emailSpan.textContent = email;
+  }
 
-    if (!otp) {
-      alert("⚠️ Enter your OTP.");
+  // Auto-focus and input handling
+  otpInputs.forEach((input, index) => {
+    input.addEventListener("input", (e) => {
+      // Only allow numbers
+      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+      
+      // Move to next input
+      if (e.target.value && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+      }
+    });
+
+    input.addEventListener("keydown", (e) => {
+      // Move back on backspace
+      if (e.key === "Backspace" && !e.target.value && index > 0) {
+        otpInputs[index - 1].focus();
+      }
+    });
+  });
+
+  // Verify OTP
+  verifyBtn.addEventListener("click", async () => {
+    const otp = Array.from(otpInputs).map(input => input.value).join("");
+
+    if (otp.length !== 4) {
+      alert("⚠️ Please enter the complete 4-digit code.");
       return;
     }
 
-    const data = await apiRequest("/auth/verify_otp", "POST", { email, otp });
+    verifyBtn.textContent = "Verifying...";
+    verifyBtn.disabled = true;
 
-    if (data.success) {
-      alert("✅ Account verified successfully!");
-      window.location.href = "login.html";
-    } else {
-      alert(`❌ ${data.message || "Verification failed."}`);
+    try {
+      const data = await apiRequest("/auth/verify_otp", "POST", {
+        email,
+        otp
+      });
+
+      if (data.success) {
+        alert("✅ Email verified successfully! You can now login.");
+        localStorage.removeItem("email");
+        window.location.href = "login.html";
+      } else {
+        alert(`❌ ${data.message || "Invalid verification code."}`);
+        // Clear inputs
+        otpInputs.forEach(input => input.value = "");
+        otpInputs[0].focus();
+      }
+    } catch (error) {
+      console.error("Verification error:", error);
+      alert("⚠️ Server error. Please try again.");
+    } finally {
+      verifyBtn.textContent = "Verify";
+      verifyBtn.disabled = false;
     }
   });
+
+  // Resend OTP
+  if (resendLink) {
+    resendLink.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const originalText = resendLink.textContent;
+      resendLink.textContent = "Sending...";
+      resendLink.style.pointerEvents = "none";
+
+      try {
+        const data = await apiRequest("/auth/send_otp", "POST", { email });
+
+        if (data.success) {
+          alert("✅ New verification code sent to your email!");
+        } else {
+          alert(`❌ ${data.message || "Failed to resend code."}`);
+        }
+      } catch (error) {
+        console.error("Resend error:", error);
+        alert("⚠️ Server error. Please try again.");
+      } finally {
+        resendLink.textContent = originalText;
+        resendLink.style.pointerEvents = "auto";
+      }
+    });
+  }
 });

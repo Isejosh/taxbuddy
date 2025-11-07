@@ -1,3 +1,4 @@
+// login.js - Fixed
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
 
@@ -12,30 +13,42 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Show loading state
+    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = "Signing in...";
+    submitBtn.disabled = true;
+
     try {
-      const data = await apiRequest("/auth/sign_in", "POST", { email, password });
+      const data = await apiRequest("/auth/sign_in", "POST", { 
+        email, 
+        password 
+      });
 
       if (!data.success) {
         alert(`❌ ${data.message || "Invalid credentials."}`);
         return;
       }
 
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("accountType", data.user.accountType || "individual");
+      // Store user data
+      setUserData(data.user, data.token);
 
       alert("✅ Login successful!");
 
       // Redirect based on account type
-      if (data.user.accountType === "business") {
-        window.location.href = "business-dashboard.html";
+      const accountType = data.user.accountType || "individual";
+      if (accountType === "business") {
+        window.location.href = "dashboard_business.html";
       } else {
-        window.location.href = "individual-dashboard.html";
+        window.location.href = "dashboard_individual.html";
       }
 
     } catch (error) {
       console.error("Login error:", error);
       alert("⚠️ Server error. Try again later.");
+    } finally {
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
     }
   });
 });
