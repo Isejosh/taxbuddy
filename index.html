@@ -29,7 +29,7 @@
     const loader = document.getElementById('loading');
     
     // pick which file to load
-    const page = isMobile ? 'index-mobile.html' : 'index-desktop.html';
+    const page = isMobile ? './index-mobile.html' : './index-desktop.html';
 
     fetch(page)
   .then(res => res.text())
