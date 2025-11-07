@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const response = await fetch(
-      `http://localhost:5000/api${endpoint}`,
+      `https://tax-tracker-backend.onrender.com/api${endpoint}`,
       options
     );
     return response.json();

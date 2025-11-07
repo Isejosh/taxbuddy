@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "https://tax-tracker-backend.onrender.com/api";
 
 async function apiRequest(endpoint, method = "GET", body = null, auth = false) {
   const headers = { "Content-Type": "application/json" };
@@ -20,3 +20,4 @@ async function apiRequest(endpoint, method = "GET", body = null, auth = false) {
     return { success: false, message: "Server connection failed" };
   }
 }
+

@@ -1,6 +1,6 @@
 // dashboard.js
 
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "https://tax-tracker-backend.onrender.com/api";
 
 // Generic API helper
 async function apiRequest(endpoint, method = "GET", body = null, authRequired = false) {

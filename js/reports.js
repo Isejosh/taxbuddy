@@ -170,4 +170,4 @@ function getAuthToken() {
 }
 
 // Make sure API_BASE_URL is available
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://tax-tracker-backend.onrender.com/api";

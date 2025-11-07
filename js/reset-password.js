@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/auth/reset_password/${token}`,
+        `https://tax-tracker-backend.onrender.com/api/auth/reset_password/${token}`,
         {
           method: "PUT",
           headers: {
