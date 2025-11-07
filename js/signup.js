@@ -1,4 +1,3 @@
-// signup.js - Fixed
 document.addEventListener("DOMContentLoaded", () => {
   const individualForm = document.querySelector("#individualForm .login_form");
   const businessForm = document.querySelector("#businessForm .login_form");
@@ -59,9 +58,10 @@ async function handleSignup(accountType, form) {
   try {
     // Prepare request body based on account type
     const requestBody = {
-      name,
+      fullname: name,
       email,
-      password
+      password,
+      account_type:accountType,
     };
 
     // Add optional fields
