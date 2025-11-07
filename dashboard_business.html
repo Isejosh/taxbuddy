@@ -20,22 +20,38 @@
   </head>
 
   <body>
+    <div class="side-nav">
+        <img class="tax-buddy-img" src="assets/images/Taxbuddy App Logo.png" alt="">
+
+        <div class="nav-links">
+            <a href="" class="link dashboard-link"><span><img src="icons/dashboard-link.svg" alt=""></span>Dashboard</a>
+            <a href="" class="link tax-link"><span><img src="icons/calculator-link.svg" alt=""></span>Tax Calculator</a>
+            <a href="" class="link history-link"><span><img src="icons/history-link.svg" alt=""></span>Tax History</a>
+            <a href="" class="link alert-link"><span><img src="icons/notice-link.png" alt=""></span>Alert</a>
+            <a href="" class="link profile-link"><span><img src="icons/profile-link.svg" alt=""></span>Profile</a>
+        </div>
+
+        <div class="sign-out-wrapper">
+            <a href="" class="sign-out-link">Sign out</a>
+        </div>
+    </div>
+    
     <div class="dashboard-container">
       <div class="header-top">
         <div class="user-info">
           <p>Welcome,</p>
-          <h2>Beauty's Enterprise</h2>
+          <h2 class="mobile">Beauty's Enterprise</h2>
+          <h2 class="desktop">Welcome back, Beauty's Enterprise</h2>
           <span>Business account</span>
         </div>
-        <button class="notification-btn">
+        <a href="notification.html" class="notification-btn">
           <img src="icons/notification-btn.svg" alt="" />
-        </button>
+        </a>
       </div>
 
       <div class="date-filters">
         <div class="selector-container">
           <select name="month">
-            <option>Month</option>
             <option value="january">January</option>
             <option value="february">February</option>
             <option value="march">March</option>
@@ -53,117 +69,120 @@
         <div class="selector-container">
           <select name="year">
             <option>2025</option>
+            <option>2026</option>
           </select>
         </div>
       </div>
 
       <div class="grid-container">
-      <div class="tax-overview">
-        <h2>Tax Status Overview</h2>
-        <!-- Paid Taxes -->
-        <div class="tax-row">
-          <div class="label">Paid Taxes</div>
-          <div class="percent paid" id="paid-percent">0%</div>
+        <div class="grid-col-1">
+          <div class="tax-overview">
+            <h2>Tax Status Overview</h2>
+            <!-- Paid Taxes -->
+            <div class="tax-row">
+              <div class="label">Paid Taxes</div>
+              <div class="percent paid" id="paid-percent">0%</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill paid-fill" id="paid-bar"></div>
+            </div>
+            
+            <!-- Unpaid Taxes -->
+            <div class="tax-row">
+              <div class="label">Unpaid Taxes</div>
+              <div class="percent unpaid" id="unpaid-percent">0%</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill unpaid-fill" id="unpaid-bar"></div>
+            </div>
+          </div>
+          
+          <!-- Quick Actions Section -->
+          
+          <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            
+            <div class="actions-grid">
+              <a href="calculateTax.html" class="action-card">
+                <p class="card-icon">
+                  <img src="icons/tax-calculator.svg" alt="calculator" />
+                </p>
+                <p>Tax Calculator</p>
+              </a>
+              
+              <a href="tax-history.html" class="action-card">
+                <p class="card-icon">
+                  <img src="icons/tax-history.svg" alt="history" />
+                </p>
+                <p>Tax History</p>
+              </a>
+              
+              <a href="notification.html" class="action-card">
+                <p class="card-icon">
+                  <img src="icons/notifications.svg" alt="_notice" />
+                </p>
+                <p>Notifications</p>
+              </a>
+              
+              <a href="profile-settings.html" class="action-card">
+                <p class="card-icon">
+                  <img src="icons/Group.svg" alt="_profile" />
+                </p>
+                <p>Profile & Settings</p>
+              </a>
+            </div>
+          </div>
         </div>
-        <div class="progress-bar">
-          <div class="progress-fill paid-fill" id="paid-bar"></div>
-        </div>
-
-        <!-- Unpaid Taxes -->
-        <div class="tax-row">
-          <div class="label">Unpaid Taxes</div>
-          <div class="percent unpaid" id="unpaid-percent">0%</div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill unpaid-fill" id="unpaid-bar"></div>
-        </div>
-      </div>
-
-      <!-- Quick Actions Section -->
-
-      <div class="quick-actions">
-        <h3>Quick Actions</h3>
-
-        <div class="actions-grid">
-          <a href="calculateTax.html" class="action-card">
-            <p class="card-icon">
-              <img src="icons/tax-calculator.svg" alt="calculator" />
-            </p>
-            <p>Tax Calculator</p>
-          </a>
-
-          <a href="tax-history.html" class="action-card">
-            <p class="card-icon">
-              <img src="icons/tax-history.svg" alt="history" />
-            </p>
-            <p>Tax History</p>
-          </a>
-
-          <a href="notification.html" class="action-card">
-            <p class="card-icon">
-              <img src="icons/notifications.svg" alt="_notice" />
-            </p>
-            <p>Notifications</p>
-          </a>
-
-          <a href="profile-settings.html" class="action-card">
-            <p class="card-icon">
-              <img src="icons/Group.svg" alt="_profile" />
-            </p>
-            <p>Profile & Settings</p>
-          </a>
-        </div>
-      </div>
-  
-      </div>
         
-      
-      <!-- Tax-income, Payable, Unpaid and Paid -->
-
-      <div class="tax-ledger">
-        <div class="tax-item tax-income">
-          <p class="tax-icon"><img src="icons/chart.svg" /></p>
-          <p class="tax-description">Total Income</p>
-          <h1>₦0</h1>
+        <div class="grid-col-2">
+          
+          <!-- Tax-income, Payable, Unpaid and Paid -->
+          
+          <div class="tax-ledger">
+            <div class="tax-item tax-income">
+              <p class="tax-icon"><img src="icons/chart.svg" /></p>
+              <p class="tax-description">Total Income</p>
+              <h1>₦0</h1>
+            </div>
+            
+            <div class="tax-item tax-payable">
+              <p class="tax-icon"><img src="icons/naira.svg" /></p>
+              <p class="tax-description">Total Payable</p>
+              <h1>₦0</h1>
+            </div>
+            
+            <div class="tax-item tax-unpaid">
+              <p class="tax-icon"><img src="icons/uncheck.svg" /></p>
+              <p class="tax-description">Unpaid</p>
+              <h1>₦0</h1>
+            </div>
+            
+            <div class="tax-item tax-paid">
+              <p class="tax-icon"><img src="icons/check.svg" /></p>
+              <p class="tax-description">Paid</p>
+              <h1>₦0</h1>
+            </div>
+          </div>
+          
+          <div class="report-section">
+            <h3>Download Tax Report</h3>
+            <div class="report-actions">
+              <button class="report-btn pdf-btn" id="downloadPdf">
+                <i class="ph ph-file-pdf"></i>
+                Download PDF
+              </button>
+              <button class="report-btn csv-btn" id="downloadCsv">
+                <i class="ph ph-file-csv"></i>
+                Download CSV
+              </button>
+            </div>
+            <p class="report-note">Report will include data for selected period</p>
+          </div>
         </div>
-
-        <div class="tax-item tax-payable">
-          <p class="tax-icon"><img src="icons/naira.svg" /></p>
-          <p class="tax-description">Total Payable</p>
-          <h1>₦0</h1>
-        </div>
-
-        <div class="tax-item tax-unpaid">
-          <p class="tax-icon"><img src="icons/uncheck.svg" /></p>
-          <p class="tax-description">Unpaid</p>
-          <h1>₦0</h1>
-        </div>
-
-        <div class="tax-item tax-paid">
-          <p class="tax-icon"><img src="icons/check.svg" /></p>
-          <p class="tax-description">Paid</p>
-          <h1>₦0</h1>
-        </div>
-      </div>
-
-      <div class="report-section">
-        <h3>Download Tax Report</h3>
-        <div class="report-actions">
-          <button class="report-btn pdf-btn" id="downloadPdf">
-            <i class="ph ph-file-pdf"></i>
-            Download PDF
-          </button>
-          <button class="report-btn csv-btn" id="downloadCsv">
-            <i class="ph ph-file-csv"></i>
-            Download CSV
-          </button>
-        </div>
-        <p class="report-note">Report will include data for selected period</p>
-      </div>
+      </div>     
     </div>
-
+    
     <!-- Footer-Nav -->
-
     <nav class="bottom-nav">
       <a href="dashboard_business.html" class="nav-item active">
         <i class="ph ph-house"></i>
