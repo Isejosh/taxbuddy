@@ -1,5 +1,5 @@
 // api.js - Fixed API Integration
-const BASE_URL = "https://tax-tracker-backend.onrender.com";
+const BASE_URL = "https://tax-tracker-backend.onrender.com/api";
 
 /**
  * Generic API request handler
