@@ -1,4 +1,6 @@
-// verifyOtp.js - Fixed
+// verifyOtp.js - Fixed with proper import
+import { apiRequest } from './api.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   const verifyBtn = document.querySelector(".verify_btn");
   const resendLink = document.querySelector(".resend_link");
@@ -52,10 +54,14 @@ document.addEventListener("DOMContentLoaded", () => {
     verifyBtn.disabled = true;
 
     try {
+      console.log("📤 Verifying OTP:", { email, otp });
+      
       const data = await apiRequest("/auth/verify_otp", "POST", {
         email,
         otp
       });
+
+      console.log("📥 Verify response:", data);
 
       if (data.success) {
         alert("✅ Email verified successfully! You can now login.");
@@ -68,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
         otpInputs[0].focus();
       }
     } catch (error) {
-      console.error("Verification error:", error);
+      console.error("❌ Verification error:", error);
       alert("⚠️ Server error. Please try again.");
     } finally {
       verifyBtn.textContent = "Verify";
@@ -86,7 +92,11 @@ document.addEventListener("DOMContentLoaded", () => {
       resendLink.style.pointerEvents = "none";
 
       try {
+        console.log("📤 Resending OTP to:", email);
+        
         const data = await apiRequest("/auth/send_otp", "POST", { email });
+        
+        console.log("📥 Resend response:", data);
 
         if (data.success) {
           alert("✅ New verification code sent to your email!");
@@ -94,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alert(`❌ ${data.message || "Failed to resend code."}`);
         }
       } catch (error) {
-        console.error("Resend error:", error);
+        console.error("❌ Resend error:", error);
         alert("⚠️ Server error. Please try again.");
       } finally {
         resendLink.textContent = originalText;
