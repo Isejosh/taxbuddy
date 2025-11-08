@@ -91,18 +91,27 @@ async function handleSignup(accountType, form) {
       return;
     }
 
-    // Send OTP
-    const otpData = await apiRequest("/auth/send_otp", "POST", { email });
-
-    if (!otpData.success) {
-      alert("⚠️ Account created but OTP sending failed. Please try resending from verification page.");
-    }
-
     // Store email and account type for verification
     localStorage.setItem("email", email);
     localStorage.setItem("accountType", accountType);
 
-    alert("✅ Signup successful! Please check your email for verification code.");
+    // The backend should automatically send OTP after signup
+    // If you get the success message but no OTP, check if backend sends it automatically
+    // Or manually trigger OTP send
+    try {
+      const otpData = await apiRequest("/auth/send_otp", "POST", { email });
+      console.log("OTP send response:", otpData); // DEBUG
+      
+      if (otpData.success) {
+        alert("✅ Signup successful! Please check your email for verification code.");
+      } else {
+        alert("⚠️ Account created! Please click 'Resend code' on the next page to receive OTP.");
+      }
+    } catch (otpError) {
+      console.error("OTP send error:", otpError);
+      alert("⚠️ Account created! Please click 'Resend code' on the next page to receive OTP.");
+    }
+
     window.location.href = "verify-code.html";
 
   } catch (error) {
