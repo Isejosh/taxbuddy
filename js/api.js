@@ -1,4 +1,3 @@
-// api.js - Fixed API Integration with Better Debugging
 const BASE_URL = "https://tax-tracker-backend.onrender.com/api";
 
 /**

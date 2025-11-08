@@ -1,4 +1,3 @@
-// signup.js - Fixed with better debugging
 document.addEventListener("DOMContentLoaded", () => {
   const individualForm = document.querySelector("#individualForm .login_form");
   const businessForm = document.querySelector("#businessForm .login_form");

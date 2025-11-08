@@ -1,6 +1,3 @@
-// verifyOtp.js - Fixed with proper import
-import { apiRequest } from './api.js';
-
 document.addEventListener("DOMContentLoaded", () => {
   const verifyBtn = document.querySelector(".verify_btn");
   const resendLink = document.querySelector(".resend_link");
