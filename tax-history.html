@@ -16,25 +16,7 @@
 
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/calculateTax.css" />
-
-    <style>
-      .filters { display:flex; gap:12px; margin:16px 0; }
-      .status-tabs { display:flex; gap:8px; margin:8px 0 16px; }
-      .tab { padding:8px 12px; border-radius:8px; cursor:pointer; }
-      .tab.active { background:#0ea5a1; color:#fff; }
-      .records-container { display:flex; flex-direction:column; gap:12px; margin-top:12px; }
-      .paid-state { background:#fff; padding:12px; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
-      .paid-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-      .paid-top_body.paid_green { color:#059669; font-weight:600; }
-      .paid-middle { display:flex; gap:12px; margin-bottom:8px; }
-      .paid-text { flex:1; }
-      .paid-btn { margin-top:8px; padding:8px 10px; border-radius:8px; cursor:pointer; border:none; background:#0ea5a1; color:#fff; }
-      .bottom_modal { position:fixed; left:0; right:0; bottom:-100%; background:#fff; transition:bottom .2s ease; box-shadow:0 -6px 20px rgba(0,0,0,.15); padding:16px; border-top-left-radius:12px; border-top-right-radius:12px; }
-      .bottom_modal.show { bottom:0; }
-      .toast { position:fixed; right:14px; top:14px; background:#16a34a; color:#fff; padding:10px 14px; border-radius:10px; display:none; }
-      .toast.show { display:block; }
-      .empty-state { display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center; padding:24px; text-align:center; }
-    </style>
+    <link rel="stylesheet" href="css/tax-history.css" />
   </head>
 
   <body>
@@ -48,7 +30,7 @@
 
       <p class="subtitle">Track and manage your tax payment records</p>
 
-      <div class="card-container" id="summary-cards" style="margin-top:10px">
+      <div class="card-container" id="summary-cards">
         <div class="card"><h3>Total Records</h3><p id="totalRecords">0</p></div>
         <div class="card paid"><h3>Paid</h3><p id="paidCount">0</p></div>
         <div class="card unpaid"><h3>Unpaid</h3><p id="unpaidCount">0</p></div>
@@ -57,7 +39,7 @@
 
       <div class="filters">
         <select id="monthFilter" aria-label="Month filter">
-          <option value="">All months</option>
+          <option value="">Month</option>
           <option value="01">January</option>
           <option value="02">February</option>
           <option value="03">March</option>
@@ -73,14 +55,14 @@
         </select>
 
         <select id="yearFilter" aria-label="Year filter">
-          <option value="">All years</option>
+          <option value="">Year</option>
           <option value="2023">2023</option>
           <option value="2024">2024</option>
           <option value="2025" selected>2025</option>
           <option value="2026">2026</option>
         </select>
 
-        <div style="margin-left:auto" class="status-tabs" role="tablist">
+        <div class="status-tabs" role="tablist">
           <div class="tab active" data-status="">All</div>
           <div class="tab" data-status="paid">Paid</div>
           <div class="tab" data-status="unpaid">Unpaid</div>
@@ -88,7 +70,7 @@
       </div>
 
       <div class="empty-state" id="emptyState">
-        <i class="ph ph-calendar-dots empty-state_calendar" style="font-size:40px"></i>
+        <i class="ph ph-calendar-dots empty-state_calendar"></i>
         <p id="emptyText">Enter your income and tap calculate to view your tax breakdown.</p>
         <button onclick="window.location.href='calculateTax.html'">Calculate Your First Tax</button>
       </div>
@@ -104,8 +86,8 @@
           <p><strong>Period:</strong> <span id="modalPeriod"></span></p>
           <p><strong>Amount:</strong> <span id="modalAmount"></span></p>
         </div>
-        <div style="display:flex; gap:10px; margin-top:12px">
-          <button class="confirm_btn paid-btn" id="confirmPayment">Confirm Payment</button>
+        <div>
+          <button class="confirm_btn" id="confirmPayment">Confirm Payment</button>
           <button class="cancel_btn" id="closeModal">Cancel</button>
         </div>
       </div>
@@ -116,7 +98,7 @@
     <nav class="bottom-nav">
       <a href="dashboard_business.html" class="nav-item"><i class="ph ph-house"></i><span>Home</span></a>
       <a href="calculateTax.html" class="nav-item"><i class="ph ph-calculator"></i><span>Calculator</span></a>
-      <a href="tax-history.html" class="nav-item active"><i class="ph ph-clock"></i><span>History</span></a>
+      <a href="tax-history.html" class="nav-item active"><i class="ph-fill ph-clock"></i><span>History</span></a>
       <a href="notification.html" class="nav-item"><i class="ph ph-bell-simple-ringing"></i><span>Alerts</span></a>
       <a href="profile-settings.html" class="nav-item"><i class="ph ph-user"></i><span>Profile</span></a>
     </nav>
