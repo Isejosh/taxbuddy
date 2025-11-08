@@ -1,4 +1,4 @@
-// login.js - Fixed
+// login.js - Fixed with better debugging
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
 
@@ -20,23 +20,38 @@ document.addEventListener("DOMContentLoaded", () => {
     submitBtn.disabled = true;
 
     try {
+      console.log("📤 Login request:", { email });
+
       const data = await apiRequest("/auth/sign_in", "POST", { 
         email, 
         password 
       });
 
+      console.log("📥 Login response:", data);
+
+      // Check if login was successful
       if (!data.success) {
-        alert(`❌ ${data.message || "Invalid credentials."}`);
+        alert(`❌ ${data.message || "Invalid email or password."}`);
+        return;
+      }
+
+      // Check if user data exists
+      if (!data.user || !data.token) {
+        console.error("Missing user data or token:", data);
+        alert("❌ Login failed. Invalid response from server.");
         return;
       }
 
       // Store user data
+      console.log("✅ Storing user data:", data.user);
       setUserData(data.user, data.token);
 
       alert("✅ Login successful!");
 
       // Redirect based on account type
-      const accountType = data.user.accountType || "individual";
+      const accountType = data.user.accountType || data.user.account_type || "individual";
+      console.log("👤 Account type:", accountType);
+
       if (accountType === "business") {
         window.location.href = "dashboard_business.html";
       } else {
@@ -44,8 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
     } catch (error) {
-      console.error("Login error:", error);
-      alert("⚠️ Server error. Try again later.");
+      console.error("❌ Login error:", error);
+      alert(`⚠️ ${error.message || "Server error. Please try again later."}`);
     } finally {
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
