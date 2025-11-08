@@ -1,4 +1,4 @@
-// signup.js - Fixed based on actual API
+// signup.js - Fixed with better debugging
 document.addEventListener("DOMContentLoaded", () => {
   const individualForm = document.querySelector("#individualForm .login_form");
   const businessForm = document.querySelector("#businessForm .login_form");
@@ -57,16 +57,16 @@ async function handleSignup(accountType, form) {
   submitBtn.disabled = true;
 
   try {
-    // API expects: fullname, username, email, password
+    // Build clean request body
     const requestBody = {
       fullname: name,
       email: email,
       password: password,
-      annualIncomeRange: income,
+      account_type: accountType,
     };
 
-    // Add optional fields based on your form
-    if (income) requestBody.income = income;
+    // Add optional fields only if they exist
+    if (income) requestBody.annualIncomeRange = income;
     if (tin) requestBody.tin = tin;
 
     // For business, add business type if available
@@ -75,7 +75,7 @@ async function handleSignup(accountType, form) {
       if (businessType) requestBody.businessType = businessType;
     }
 
-    console.log("Signup request:", requestBody); // DEBUG
+    console.log("📤 Signup request:", requestBody);
 
     // Sign up
     const signupData = await apiRequest(
@@ -84,10 +84,11 @@ async function handleSignup(accountType, form) {
       requestBody
     );
 
-    console.log("Signup response:", signupData); // DEBUG
+    console.log("📥 Signup response:", signupData);
 
+    // Check if signup was successful
     if (!signupData.success) {
-      alert(`❌ ${signupData.message || "Signup failed."}`);
+      alert(`❌ ${signupData.message || "Signup failed. Please try again."}`);
       return;
     }
 
@@ -95,28 +96,39 @@ async function handleSignup(accountType, form) {
     localStorage.setItem("email", email);
     localStorage.setItem("accountType", accountType);
 
-    // The backend should automatically send OTP after signup
-    // If you get the success message but no OTP, check if backend sends it automatically
-    // Or manually trigger OTP send
+    // Check if OTP was already sent by backend
+    if (signupData.message && signupData.message.includes("OTP")) {
+      console.log("✅ OTP already sent by backend");
+      alert("✅ Signup successful! Check your email for verification code.");
+      window.location.href = "verify-code.html";
+      return;
+    }
+
+    // If backend didn't send OTP automatically, send it manually
+    console.log("📤 Sending OTP request...");
+    submitBtn.textContent = "Sending verification code...";
+
     try {
       const otpData = await apiRequest("/auth/send_otp", "POST", { email });
-      console.log("OTP send response:", otpData); // DEBUG
-      
+      console.log("📥 OTP response:", otpData);
+
       if (otpData.success) {
-        alert("✅ Signup successful! Please check your email for verification code.");
+        alert("✅ Signup successful! Check your email for verification code.");
       } else {
-        alert("⚠️ Account created! Please click 'Resend code' on the next page to receive OTP.");
+        console.warn("⚠️ OTP send failed:", otpData.message);
+        alert(`⚠️ Account created! ${otpData.message || "Please click 'Resend code' on the next page."}`);
       }
     } catch (otpError) {
-      console.error("OTP send error:", otpError);
+      console.error("❌ OTP send error:", otpError);
       alert("⚠️ Account created! Please click 'Resend code' on the next page to receive OTP.");
     }
 
+    // Redirect to verification page
     window.location.href = "verify-code.html";
 
   } catch (error) {
-    console.error("Signup error:", error);
-    alert("⚠️ Server error. Please try again later.");
+    console.error("❌ Signup error:", error);
+    alert(`❌ Error: ${error.message || "Server error. Please try again later."}`);
   } finally {
     submitBtn.textContent = originalText;
     submitBtn.disabled = false;

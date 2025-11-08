@@ -1,4 +1,4 @@
-// api.js - Fixed API Integration
+// api.js - Fixed API Integration with Better Debugging
 const BASE_URL = "https://tax-tracker-backend.onrender.com/api";
 
 /**
@@ -28,23 +28,55 @@ async function apiRequest(endpoint, method = "GET", body = null, auth = false) {
     options.body = JSON.stringify(body);
   }
 
+  console.log(`🌐 API Request: ${method} ${BASE_URL}${endpoint}`);
+  console.log("📦 Request body:", body);
+
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, options);
-    const data = await response.json();
+    
+    // Log response status
+    console.log(`📊 Response status: ${response.status} ${response.statusText}`);
+    
+    // Try to parse JSON response
+    let data;
+    try {
+      data = await response.json();
+      console.log("📥 Response data:", data);
+    } catch (parseError) {
+      console.error("❌ Failed to parse JSON response:", parseError);
+      const text = await response.text();
+      console.log("📄 Raw response:", text);
+      return { 
+        success: false, 
+        message: "Invalid server response format." 
+      };
+    }
     
     // Handle token expiration
     if (!data.success && response.status === 401) {
+      console.warn("⚠️ Session expired (401)");
       localStorage.clear();
       window.location.href = "login.html";
       return { success: false, message: "Session expired. Please login again." };
     }
     
+    // Handle server errors
+    if (!response.ok && !data.success) {
+      console.error(`❌ Server error: ${response.status}`, data);
+    }
+    
     return data;
   } catch (error) {
-    console.error("API request error:", error);
+    console.error("❌ API request failed:", error);
+    console.error("Error details:", {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
     return { 
       success: false, 
-      message: "Network error. Please check your connection." 
+      message: "Network error. Please check your connection.",
+      error: error.message
     };
   }
 }
