@@ -1,4 +1,4 @@
-// login.js - Fixed with better debugging
+// login.js - Fixed to handle backend response structure
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
 
@@ -22,34 +22,38 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       console.log("📤 Login request:", { email });
 
-      const data = await apiRequest("/auth/sign_in", "POST", { 
+      const response = await apiRequest("/auth/sign_in", "POST", { 
         email, 
         password 
       });
 
-      console.log("📥 Login response:", data);
+      console.log("📥 Login response:", response);
 
       // Check if login was successful
-      if (!data.success) {
-        alert(`❌ ${data.message || "Invalid email or password."}`);
+      if (!response.success) {
+        alert(`❌ ${response.message || "Invalid email or password."}`);
         return;
       }
 
+      // Backend returns user data inside "data" object
+      const userData = response.data;
+      const token = userData.token || response.token;
+
       // Check if user data exists
-      if (!data.user || !data.token) {
-        console.error("Missing user data or token:", data);
+      if (!userData || !token) {
+        console.error("Missing user data or token:", response);
         alert("❌ Login failed. Invalid response from server.");
         return;
       }
 
       // Store user data
-      console.log("✅ Storing user data:", data.user);
-      setUserData(data.user, data.token);
+      console.log("✅ Storing user data:", userData);
+      setUserData(userData, token);
 
       alert("✅ Login successful!");
 
       // Redirect based on account type
-      const accountType = data.user.accountType || data.user.account_type || "individual";
+      const accountType = userData.accountType || userData.account_type || "individual";
       console.log("👤 Account type:", accountType);
 
       if (accountType === "business") {
