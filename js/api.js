@@ -130,6 +130,3 @@ function clearUserData() {
   localStorage.removeItem("userName");
   localStorage.removeItem("email");
 }
-
-// At the end of api.js, add:
-export { apiRequest, getUserId, getAuthToken, getUserType, setUserData, clearUserData };
