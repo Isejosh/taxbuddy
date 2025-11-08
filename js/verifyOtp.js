@@ -43,8 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
   verifyBtn.addEventListener("click", async () => {
     const otp = Array.from(otpInputs).map(input => input.value).join("");
 
-    if (otp.length !== 4) {
-      alert("⚠️ Please enter the complete 4-digit code.");
+    if (otp.length !== 6) {
+      alert("⚠️ Please enter the complete 6-digit code.");
       return;
     }
 
