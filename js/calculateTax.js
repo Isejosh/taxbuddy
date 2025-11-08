@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Redirect to tax history
           setTimeout(() => {
-            window.location.href = "taxHistory.html";
+            window.location.href = "tax-history.html";
           }, 1500);
         } else {
           alert(`❌ ${response.message || "Failed to save tax record"}`);
