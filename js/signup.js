@@ -1,3 +1,4 @@
+// signup.js - Fixed based on actual API
 document.addEventListener("DOMContentLoaded", () => {
   const individualForm = document.querySelector("#individualForm .login_form");
   const businessForm = document.querySelector("#businessForm .login_form");
@@ -56,15 +57,15 @@ async function handleSignup(accountType, form) {
   submitBtn.disabled = true;
 
   try {
-    // Prepare request body based on account type
+    // API expects: fullname, username, email, password
     const requestBody = {
       fullname: name,
-      email,
-      password,
-      account_type:accountType,
+      username: name.toLowerCase().replace(/\s+/g, ''), // Create username from name
+      email: email,
+      password: password
     };
 
-    // Add optional fields
+    // Add optional fields based on your form
     if (income) requestBody.income = income;
     if (tin) requestBody.tin = tin;
 
@@ -74,12 +75,16 @@ async function handleSignup(accountType, form) {
       if (businessType) requestBody.businessType = businessType;
     }
 
+    console.log("Signup request:", requestBody); // DEBUG
+
     // Sign up
     const signupData = await apiRequest(
       `/auth/sign_up/${accountType}`,
       "POST",
       requestBody
     );
+
+    console.log("Signup response:", signupData); // DEBUG
 
     if (!signupData.success) {
       alert(`❌ ${signupData.message || "Signup failed."}`);
@@ -97,7 +102,7 @@ async function handleSignup(accountType, form) {
     localStorage.setItem("email", email);
     localStorage.setItem("accountType", accountType);
 
-    alert("✅ Signup successful! Please verify your email.");
+    alert("✅ Signup successful! Please check your email for verification code.");
     window.location.href = "verify-code.html";
 
   } catch (error) {
