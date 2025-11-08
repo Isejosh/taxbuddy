@@ -60,9 +60,9 @@ async function handleSignup(accountType, form) {
     // API expects: fullname, username, email, password
     const requestBody = {
       fullname: name,
-      username: name.toLowerCase().replace(/\s+/g, ''), // Create username from name
       email: email,
-      password: password
+      password: password,
+      annualIncomeRange: income,
     };
 
     // Add optional fields based on your form
