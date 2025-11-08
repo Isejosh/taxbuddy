@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (data.success) {
           alert("🗑️ Account deleted successfully.");
           localStorage.clear();
-          window.location.href = "index.html";
+          window.location.href = "login.html";
         } else {
           alert(`❌ ${data.message || "Failed to delete account."}`);
         }
