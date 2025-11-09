@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
     } catch (error) {
-      console.error("❌ Login error:", error);
+      console.error("Login error:", error);
       alert(`⚠️ ${error.message || "Server error. Please try again later."}`);
     } finally {
       submitBtn.textContent = originalText;

@@ -6,25 +6,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Get email from localStorage
   const email = localStorage.getItem("email");
-  
+  const demoOTP = localStorage.getItem("demoOTP"); // 🎯 Grab demo OTP (for presentation/testing)
+
   if (!email) {
     alert("❌ Email not found. Please sign up again.");
     window.location.href = "signup.html";
     return;
   }
 
-  // Display email
+  // Display email on the page
   if (emailSpan) {
     emailSpan.textContent = email;
+  }
+
+  // ============================
+  // 🎯 DEMO MODE: Auto-fill OTP (for presentation)
+  // This section automatically fills OTP inputs with the OTP returned by backend.
+  // Helps your PM/testers verify accounts without checking logs or asking for OTP manually.
+  // ============================
+  if (demoOTP) {
+    demoOTP.split("").forEach((digit, index) => {
+      if (otpInputs[index]) otpInputs[index].value = digit;
+    });
+    console.log(`🎯 Demo OTP auto-filled: ${demoOTP}`);
   }
 
   // Auto-focus and input handling
   otpInputs.forEach((input, index) => {
     input.addEventListener("input", (e) => {
-      // Only allow numbers
+      // Allow only numbers
       e.target.value = e.target.value.replace(/[^0-9]/g, "");
-      
-      // Move to next input
+
+      // Move to next input automatically
       if (e.target.value && index < otpInputs.length - 1) {
         otpInputs[index + 1].focus();
       }
@@ -38,9 +51,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Verify OTP
+  // ============================
+  // 🧩 VERIFY OTP
+  // ============================
   verifyBtn.addEventListener("click", async () => {
-    const otp = Array.from(otpInputs).map(input => input.value).join("");
+    const otp = Array.from(otpInputs).map((input) => input.value).join("");
 
     if (otp.length !== 6) {
       alert("⚠️ Please enter the complete 6-digit code.");
@@ -52,22 +67,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       console.log("📤 Verifying OTP:", { email, otp });
-      
-      const data = await apiRequest("/auth/verify_otp", "POST", {
-        email,
-        otp
-      });
+
+      const data = await apiRequest("/auth/verify_otp", "POST", { email, otp });
 
       console.log("📥 Verify response:", data);
 
       if (data.success) {
         alert("✅ Email verified successfully! You can now login.");
         localStorage.removeItem("email");
+        localStorage.removeItem("demoOTP"); // 🧹 Clean up demo data after success
         window.location.href = "login.html";
       } else {
         alert(`❌ ${data.message || "Invalid verification code."}`);
-        // Clear inputs
-        otpInputs.forEach(input => input.value = "");
+        // Clear inputs for retry
+        otpInputs.forEach((input) => (input.value = ""));
         otpInputs[0].focus();
       }
     } catch (error) {
@@ -79,7 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Resend OTP
+  // ============================
+  // 🔄 RESEND OTP
+  // ============================
   if (resendLink) {
     resendLink.addEventListener("click", async (e) => {
       e.preventDefault();
@@ -90,13 +105,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         console.log("📤 Resending OTP to:", email);
-        
+
         const data = await apiRequest("/auth/send_otp", "POST", { email });
-        
         console.log("📥 Resend response:", data);
 
         if (data.success) {
           alert("✅ New verification code sent to your email!");
+
+          // 🧩 DEMO MODE: Update demoOTP if available
+          if (data.data?.otp) {
+            localStorage.setItem("demoOTP", data.data.otp);
+            demoOTP.split("").forEach((digit, index) => {
+              if (otpInputs[index]) otpInputs[index].value = digit;
+            });
+            console.log(`🎯 Updated Demo OTP auto-filled: ${data.data.otp}`);
+          }
         } else {
           alert(`❌ ${data.message || "Failed to resend code."}`);
         }

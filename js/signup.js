@@ -91,6 +91,15 @@ async function handleSignup(accountType, form) {
       return;
     }
 
+    // DEMO OTP handling
+if (signupData.otp) {
+  console.log(`🎯 DEMO OTP for ${email}: ${signupData.otp}`);
+  alert(`🔐 Your demo OTP is: ${signupData.otp}`);
+  // You can optionally auto-fill it in localStorage for verify page
+  localStorage.setItem("demoOTP", signupData.otp);
+}
+
+
     // Store email and account type for verification
     localStorage.setItem("email", email);
     localStorage.setItem("accountType", accountType);
