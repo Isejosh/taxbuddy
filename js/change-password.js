@@ -1,40 +1,22 @@
+// change-password.js - Fixed endpoint
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector(".pword-reset-container");
+  const form = document.querySelector(".pword-reset-container") || document.querySelector("form");
   const currentPassword = document.getElementById("currentPassword");
   const newPassword = document.getElementById("newPassword");
   const confirmPassword = document.getElementById("confirmPassword");
-  const updateBtn = form.querySelector(".save-btn");
+  const updateBtn = form.querySelector(".save-btn") || form.querySelector('button[type="submit"]');
   const backBtn = form.querySelector(".logout-btn");
 
-  const token = localStorage.getItem("token");
-  if (!token) {
+  const token = getAuthToken();
+  const userId = getUserId();
+
+  if (!token || !userId) {
     alert("⚠️ Session expired. Please log in again.");
-    window.location.href = "index.html";
+    window.location.href = "login.html";
     return;
   }
 
-  // ✅ Helper function to call API
-  async function apiRequest(endpoint, method, body = null) {
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    if (body) {
-      options.body = JSON.stringify(body);
-    }
-
-    const response = await fetch(
-      `https://tax-tracker-backend.onrender.com/api${endpoint}`,
-      options
-    );
-    return response.json();
-  }
-
-  // ✅ Handle password change
+  // Handle password change
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -52,8 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (newPass.length < 8) {
-      alert("⚠️ Password must be at least 8 characters long.");
+    if (newPass.length < 6) {
+      alert("⚠️ Password must be at least 6 characters long.");
       return;
     }
 
@@ -61,10 +43,14 @@ document.addEventListener("DOMContentLoaded", () => {
     updateBtn.disabled = true;
 
     try {
-      const data = await apiRequest("/auth/change_password", "PATCH", {
+      console.log("📤 Changing password...");
+
+      const data = await apiRequest("/auth/users/change_password", "PATCH", {
         old_password: oldPass,
         new_password: newPass,
-      });
+      }, true);
+
+      console.log("📥 Change password response:", data);
 
       if (data.success) {
         alert("✅ Password updated successfully!");
@@ -74,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         alert(`❌ ${data.message || "Failed to update password."}`);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("❌ Error:", error);
       alert("⚠️ Server error. Please try again later.");
     } finally {
       updateBtn.textContent = "Update Password";
@@ -82,9 +68,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ✅ Back button
-  backBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    window.location.href = "profile-settings.html";
-  });
+  // Back button
+  if (backBtn) {
+    backBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.location.href = "profile-settings.html";
+    });
+  }
+
+  // Helper functions
+  function getUserId() {
+    const user = localStorage.getItem("user");
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        return userData.id || userData._id || userData.userId;
+      } catch (e) {
+        console.error("Error parsing user data:", e);
+      }
+    }
+    return localStorage.getItem("userId");
+  }
+
+  function getAuthToken() {
+    return localStorage.getItem("authToken") || localStorage.getItem("token");
+  }
 });
