@@ -82,43 +82,42 @@
       }
 
       // Process records using correct field names from Postman
-      const records = payload.data.map(record => {
-        console.log("📋 Processing record:", record);
-        
-        // Use correct field names from your API
-        const totalIncome = record.turnover || record.totalIncome || record.income || 0;
-        const taxAmount = record.taxAmount || record.taxPayable || 0;
-        
-        // Determine paid status - adjust based on your API response
-        let paidStatus = record.paidStatus || "unpaid";
-        if (record.isPaid !== undefined) {
-          paidStatus = record.isPaid ? "paid" : "unpaid";
-        }
-        
-        // Format period using month field from Postman
-        let period = "N/A";
-        if (record.month && record.taxYear) {
-          period = `${record.month} ${record.taxYear}`;
-        } else if (record.month) {
-          period = `${record.month} ${new Date().getFullYear()}`;
-        } else if (record.createdAt) {
-          period = new Date(record.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        }
+const records = payload.data.map(record => {
+  console.log("📋 Processing record:", record);
 
-        return {
-          id: record.id || record._id,
-          period: period,
-          taxableIncome: `₦${parseFloat(totalIncome).toLocaleString()}`,
-          taxAmount: `₦${parseFloat(taxAmount).toLocaleString()}`,
-          paidStatus: paidStatus,
-          paidOn: record.paidOn || record.paidDate || "Not Paid",
-          paidAmount: parseFloat(record.paidAmount || (paidStatus === "paid" ? taxAmount : 0)),
-          rawIncome: parseFloat(totalIncome),
-          rawTaxAmount: parseFloat(taxAmount),
-          month: record.month,
-          year: record.taxYear
-        };
-      });
+  // Always parse numbers safely, fallback to 0
+  const rawIncome = parseFloat(record.totalIncome ?? record.income ?? record.turnover ?? 0) || 0;
+  const rawTaxAmount = parseFloat(record.taxAmount ?? record.taxPayable ?? 0) || 0;
+
+  // Determine paid status
+  let paidStatus = "unpaid";
+  if (record.paidStatus) paidStatus = record.paidStatus.toLowerCase();
+  if (record.isPaid !== undefined) paidStatus = record.isPaid ? "paid" : "unpaid";
+
+  // Determine period
+  let period = "N/A";
+  if (record.month && record.taxYear) {
+    period = `${record.month} ${record.taxYear}`;
+  } else if (record.month) {
+    period = `${record.month} ${new Date().getFullYear()}`;
+  } else if (record.createdAt) {
+    period = new Date(record.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+
+  return {
+    id: record.id || record._id,
+    period: period,
+    taxableIncome: `₦${rawIncome.toLocaleString()}`,
+    taxAmount: `₦${rawTaxAmount.toLocaleString()}`,
+    paidStatus: paidStatus,
+    paidOn: record.paidOn || record.paidDate || "Not Paid",
+    paidAmount: parseFloat(record.paidAmount ?? (paidStatus === "paid" ? rawTaxAmount : 0)),
+    rawIncome: rawIncome,
+    rawTaxAmount: rawTaxAmount,
+    month: record.month,
+    year: record.taxYear
+  };
+});
 
       console.log("✅ Processed records:", records);
       updateSummary(records);
@@ -132,24 +131,24 @@
   }
 
   function updateSummary(records) {
-    console.log("📊 Updating summary with records:", records);
-    
-    const paid = records.filter(r => r.paidStatus === "paid");
-    const unpaid = records.filter(r => r.paidStatus === "unpaid");
-    const totalPaidAmount = paid.reduce((sum, r) => sum + (r.paidAmount || 0), 0);
+  console.log("📊 Updating summary with records:", records);
 
-    console.log("📈 Summary stats:", { 
-      total: records.length, 
-      paid: paid.length, 
-      unpaid: unpaid.length, 
-      totalPaidAmount 
-    });
+  const paidRecords = records.filter(r => r.paidStatus === "paid");
+  const unpaidRecords = records.filter(r => r.paidStatus === "unpaid");
+  const totalPaidAmount = paidRecords.reduce((sum, r) => sum + (r.rawTaxAmount || 0), 0);
 
-    if (summaryEls.total) summaryEls.total.textContent = records.length;
-    if (summaryEls.paid) summaryEls.paid.textContent = paid.length;
-    if (summaryEls.unpaid) summaryEls.unpaid.textContent = unpaid.length;
-    if (summaryEls.amount) summaryEls.amount.textContent = "₦" + totalPaidAmount.toLocaleString();
-  }
+  console.log("📈 Summary stats:", { 
+    total: records.length, 
+    paid: paidRecords.length, 
+    unpaid: unpaidRecords.length, 
+    totalPaidAmount 
+  });
+
+  if (summaryEls.total) summaryEls.total.textContent = records.length;
+  if (summaryEls.paid) summaryEls.paid.textContent = paidRecords.length;
+  if (summaryEls.unpaid) summaryEls.unpaid.textContent = unpaidRecords.length;
+  if (summaryEls.amount) summaryEls.amount.textContent = `₦${totalPaidAmount.toLocaleString()}`;
+}
 
   function formatCard(record) {
     const isPaid = record.paidStatus === "paid";
