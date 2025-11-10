@@ -10,6 +10,29 @@ html{
     font-size: 62.5%;
 }
 
+/* Tablet Landscape */
+@media(max-width:1200px){
+    html{
+        font-size: 58%;
+    }
+
+}
+
+/* Tablet Potrait */
+@media(max-width:900px){
+    html{
+        font-size: 55%;
+    }
+
+}
+
+/* Phones */
+@media(max-width:600px){
+    html{
+        font-size: 43.5%;
+    }
+}
+
 body{
     font-family: "Poppins", sans-serif;
     background: rgba(33, 33, 33, 0.1);
@@ -20,7 +43,7 @@ body{
     justify-content: space-around;
     align-items: center;
     font-size: 1.6rem;
-    padding: 2rem;
+    padding: 2rem;flex-wrap: wrap;
 }
 
 .heading-image{
@@ -64,11 +87,18 @@ body{
 
 /* Intro Section */
 .intro-section{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
     padding: 8rem 0;
     background: #fff;
+}
+
+.intro-section-inside{
+    display: flex;
+    justify-content: space-around;
+    gap: 4rem;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+    flex-wrap: wrap;
 }
 
 .intro-left{
@@ -235,9 +265,9 @@ body{
 
 /* Features */
 .features{
+    margin-top: 2rem;
     background: #fff;
     padding: 4rem 0;
-    position: relative;
 }
 
 .features-inside{
@@ -247,25 +277,7 @@ body{
     gap: 2rem;
     background: linear-gradient(93.84deg, #0B430A 1.27%, #0E490D 99.21%);
     padding: 10rem 1rem 1rem 0 ;
-    /* position: relative; */
 }
-
-.elipse{
-    position: absolute;    
-    top: 15px;
-    width: 5rem;
-    height: 5rem;
-    background: #d9d9d9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 3rem;
-    font-weight: 700;
-    box-shadow: 0px 4px 58.3px 4px rgba(255, 255, 255, 0.79);
-}
-
-
 
 .features-handshake{
     display: flex;
@@ -291,6 +303,7 @@ body{
     grid-template-rows: repeat(3, auto);
     gap: 2rem;
     max-width: 120rem;
+    width: 90%;
     margin: 0 auto;
 }
 
@@ -354,6 +367,7 @@ body{
 
 .works-inside{
     max-width: 120rem;
+    width: 90%;
     margin: 0 auto;
     background-color: #fff;
     display: flex;
@@ -361,6 +375,7 @@ body{
     gap: 4rem;
     padding: 4rem;
     border-radius: 10px;
+    flex-wrap: wrap;
 }
 
 .works-heading{
@@ -374,7 +389,6 @@ body{
     flex-direction: column;
     gap: 3rem;
 }
-
 .step{
     display: flex;
     gap: 2rem;
@@ -400,7 +414,6 @@ body{
 
 .step-text p{
     font-size: 1.4rem;
-    width: 60rem;
 }
 
 /* Services */
@@ -424,7 +437,7 @@ body{
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     max-width: 120rem;
-    width: 100%;
+    width: 90%;
 }
 
 .service{
@@ -480,6 +493,7 @@ body{
 
 .ready-inside{
     max-width: 120rem;
+    width: 90%;
     margin: 0 auto;
     background: linear-gradient(90deg, rgba(247, 109, 27, 0.25) 0%, rgba(54, 126, 52, 0.25) 100%);
     padding: 4rem;
@@ -810,7 +824,7 @@ body{
 /* Contact Us */
 /* Hero */
 .hero{
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../images/contact.avif);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/contact.avif);
     height: 70vh;
     width: 100%;
     background-size: cover;
@@ -840,8 +854,15 @@ body{
 /* Get in touch */
 .contact-section{
     padding: 6rem 0;
+}
+
+.contact-section-inside{
     display: flex;
     justify-content: space-around;
+    max-width: 120rem;
+    width: 90%;
+    margin: 0 auto;
+    gap: 2rem;
 }
 
 .contact-left{
