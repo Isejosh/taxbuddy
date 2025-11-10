@@ -1,4 +1,3 @@
-// api.js - Regular Script Version (No Modules)
 const BASE_URL = "https://tax-tracker-backend.onrender.com/api";
 
 /**
@@ -19,11 +18,8 @@ async function apiRequest(endpoint, method = "GET", body = null, auth = false) {
     }
   }
 
-  const options = { 
-    method, 
-    headers 
-  };
-  
+  const options = { method, headers };
+
   if (body && (method === "POST" || method === "PUT" || method === "PATCH")) {
     options.body = JSON.stringify(body);
   }
@@ -33,11 +29,9 @@ async function apiRequest(endpoint, method = "GET", body = null, auth = false) {
 
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, options);
-    
-    // Log response status
+
     console.log(`📊 Response status: ${response.status} ${response.statusText}`);
-    
-    // Try to parse JSON response
+
     let data;
     try {
       data = await response.json();
@@ -46,38 +40,25 @@ async function apiRequest(endpoint, method = "GET", body = null, auth = false) {
       console.error("❌ Failed to parse JSON response:", parseError);
       const text = await response.text();
       console.log("📄 Raw response:", text);
-      return { 
-        success: false, 
-        message: "Invalid server response format." 
-      };
+      return { success: false, message: "Invalid server response format." };
     }
-    
-    // Handle token expiration
+
     if (!data.success && response.status === 401) {
       console.warn("⚠️ Session expired (401)");
       localStorage.clear();
       window.location.href = "login.html";
       return { success: false, message: "Session expired. Please login again." };
     }
-    
-    // Handle server errors
+
     if (!response.ok && !data.success) {
       console.error(`❌ Server error: ${response.status}`, data);
     }
-    
+
     return data;
   } catch (error) {
     console.error("❌ API request failed:", error);
-    console.error("Error details:", {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    });
-    return { 
-      success: false, 
-      message: "Network error. Please check your connection.",
-      error: error.message
-    };
+    console.error("Error details:", { name: error.name, message: error.message, stack: error.stack });
+    return { success: false, message: "Network error. Please check your connection.", error: error.message };
   }
 }
 
@@ -104,7 +85,7 @@ function getUserType() {
   if (user) {
     try {
       const userData = JSON.parse(user);
-      return userData.accountType || userData.role || "individual";
+      return userData.accountType || userData.account_type || userData.role || "individual";
     } catch (e) {
       console.error("Error parsing user data:", e);
     }
@@ -113,23 +94,20 @@ function getUserType() {
 }
 
 function setUserData(userData, token) {
-  console.log("💾 Saving user data:", userData);
-  
-  localStorage.setItem("user", JSON.stringify(userData));
-  localStorage.setItem("userId", userData.id || userData._id || userData.userId);
+  // Normalize keys to ensure consistency
+  const normalizedData = {
+    ...userData,
+    id: userData.id || userData._id || userData.userId,
+    accountType: userData.accountType || userData.account_type || "individual",
+    name: userData.fullname || userData.name || "User",
+  };
+
+  localStorage.setItem("user", JSON.stringify(normalizedData));
+  localStorage.setItem("userId", normalizedData.id);
   localStorage.setItem("authToken", token);
   localStorage.setItem("token", token);
-  localStorage.setItem("accountType", userData.accountType || userData.account_type || "individual");
-  
-  // Try multiple possible name fields from backend
-  const userName = userData.fullname || userData.fullName || userData.name || userData.username || "User";
-  localStorage.setItem("userName", userName);
-  
-  console.log("✅ User data saved:", { 
-    userId: userData.id, 
-    userName, 
-    accountType: userData.accountType || userData.account_type 
-  });
+  localStorage.setItem("accountType", normalizedData.accountType);
+  localStorage.setItem("userName", normalizedData.name);
 }
 
 function clearUserData() {
