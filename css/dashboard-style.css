@@ -138,12 +138,12 @@ body {
 
 .user-info p {
   font-size: var(--body-medium);
-  display: none;
+  display: block;
 }
 
-/* .user-info .mobile{
-  display: none;
-} */
+.user-info .mobile{
+  display: block;
+}
 
 .user-info h2 {
   margin: 5px 0;
