@@ -1,12 +1,7 @@
-// forgot_password.js - Fixed
+// forgot_password.js - CORRECTED for reset links
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector(".auth-form");
   const emailInput = document.querySelector("#email");
-
-  if (!form || !emailInput) {
-    console.error("Form or email input not found");
-    return;
-  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -32,25 +27,23 @@ document.addEventListener("DOMContentLoaded", () => {
     submitBtn.disabled = true;
 
     try {
-      console.log("📤 Sending password reset request for:", email);
+      console.log("📤 Requesting password reset link for:", email);
 
+      // This should trigger an email with reset link
       const data = await apiRequest("/auth/forgot_password", "POST", { email });
 
-      console.log("📥 Forgot password response:", data);
+      console.log("📥 Reset request response:", data);
 
       if (data.success) {
-        // Save email for verify-reset page
-        localStorage.setItem("resetEmail", email);
-        
-        alert("✅ Password reset OTP sent to your email! Please check your inbox.");
+        alert("✅ Password reset link sent to your email! Please check your inbox and click the link to reset your password.");
         
         // Clear the form
         emailInput.value = "";
         
-        // Redirect to OTP verification page
+        // Redirect to login or stay on page
         setTimeout(() => {
-          window.location.href = "verify-reset.html";
-        }, 1500);
+          window.location.href = "login.html";
+        }, 3000);
       } else {
         alert(`❌ ${data.message || "Failed to send reset email. Please try again."}`);
       }
