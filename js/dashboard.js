@@ -1,33 +1,53 @@
-// dashboard.js - Complete with Tax Summary
+// dashboard.js - SUPER SIMPLE VERSION THAT WORKS
 const BASE_URL = "https://tax-tracker-backend.onrender.com/api";
 
-// Generic API helper
-async function apiRequest(endpoint, method = "GET", body = null, authRequired = false) {
-  const headers = { "Content-Type": "application/json" };
-
-  if (authRequired) {
-    const token = getAuthToken();
-    if (token) headers["Authorization"] = `Bearer ${token}`;
+// SIMPLE: Just get the name
+function getUserName() {
+  // Try localStorage first
+  let name = localStorage.getItem("userName");
+  if (name && name !== "User") {
+    console.log("✅ Got name from localStorage:", name);
+    return name;
   }
-
-  const options = { method, headers };
-  if (body) options.body = JSON.stringify(body);
-
-  const response = await fetch(`${BASE_URL}${endpoint}`, options);
-  return response.json();
+  
+  // Try user object
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      name = user.fullname || user.fullName || user.name || user.username;
+      if (name) {
+        console.log("✅ Got name from user object:", name);
+        localStorage.setItem("userName", name); // Save it
+        return name;
+      }
+    }
+  } catch (e) {
+    console.error("Error:", e);
+  }
+  
+  return "User";
 }
 
-// LocalStorage helpers
-function getUserId() {
-  const user = localStorage.getItem("user");
-  if (user) {
-    try {
-      const userData = JSON.parse(user);
-      return userData.id || userData._id || userData.userId;
-    } catch (e) {
-      console.error("Error parsing user data:", e);
+function getUserType() {
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return user.accountType || user.account_type || "individual";
     }
-  }
+  } catch (e) {}
+  return localStorage.getItem("accountType") || "individual";
+}
+
+function getUserId() {
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return user.id || user._id || user.userId;
+    }
+  } catch (e) {}
   return localStorage.getItem("userId");
 }
 
@@ -35,239 +55,115 @@ function getAuthToken() {
   return localStorage.getItem("authToken") || localStorage.getItem("token");
 }
 
-function getUserName() {
-  const user = localStorage.getItem("user");
-  if (user) {
-    try {
-      const userData = JSON.parse(user);
-      const name = userData.fullname || userData.fullName || userData.name || userData.username;
-      if (name) return name;
-    } catch (e) {
-      console.error("Error parsing user data:", e);
-    }
-  }
-  return localStorage.getItem("userName") || "User";
-}
-
-function getUserType() {
-  const user = localStorage.getItem("user");
-  if (user) {
-    try {
-      const userData = JSON.parse(user);
-      return userData.accountType || userData.account_type || "individual";
-    } catch (e) {
-      console.error("Error parsing user data:", e);
-    }
-  }
-  return localStorage.getItem("accountType") || "individual";
-}
-
-// Update user info in header
+// UPDATE USER INFO - SUPER SIMPLE
 function updateUserInfo() {
-  const userName = getUserName();
-  const userType = getUserType();
-
-  console.log("📊 Dashboard user info:", { userName, userType });
-
-  // Update ALL h2 elements inside user-info
-  const userNameElements = document.querySelectorAll(".user-info h2");
-  const userTypeElement = document.querySelector(".user-info span");
-
-  // Set name for all h2 elements (mobile and desktop)
-  userNameElements.forEach(el => {
-    el.textContent = userName;
+  const name = getUserName();
+  const type = getUserType();
+  
+  console.log("🔍 Updating dashboard with:", { name, type });
+  
+  // Find ALL h2 elements and update them
+  const h2Elements = document.querySelectorAll(".user-info h2");
+  console.log("📍 Found", h2Elements.length, "h2 elements");
+  
+  h2Elements.forEach((h2, index) => {
+    h2.textContent = name;
+    console.log(`✅ Updated h2 #${index + 1} to:`, name);
   });
   
-  if (userNameElements.length > 0) {
-    console.log("✅ Updated user name display:", userName);
-  } else {
-    console.warn("⚠️ User name element not found");
-  }
-
-  if (userTypeElement) {
-    // Capitalize first letter
-    const displayType = userType.charAt(0).toUpperCase() + userType.slice(1);
-    userTypeElement.textContent = `${displayType} account`;
-    console.log("✅ Updated account type display:", displayType);
-  } else {
-    console.warn("⚠️ Account type element not found");
+  // Update account type
+  const typeElement = document.querySelector(".user-info span");
+  if (typeElement) {
+    typeElement.textContent = type.charAt(0).toUpperCase() + type.slice(1) + " account";
+    console.log("✅ Updated account type to:", type);
   }
 }
 
-// Fetch income/expense summary
-async function fetchIncomeExpenseSummary() {
-  try {
-    const userId = getUserId();
-    if (!userId) {
-      console.error("❌ No user ID found");
-      return;
-    }
-
-    console.log("📤 Fetching income/expense summary for user:", userId);
-
-    const data = await apiRequest(`/income-expense/${userId}/summary`, "GET", null, true);
-
-    console.log("📥 Income/expense response:", data);
-
-    if (data.success) {
-      updateIncomeData(data.data);
-    } else {
-      console.warn("⚠️ Income/Expense API not available yet");
-      updateIncomeData({ totalIncome: 0 });
-    }
-  } catch (error) {
-    console.warn("⚠️ Income/Expense API not ready:", error.message);
-    updateIncomeData({ totalIncome: 0 });
+// Generic API helper
+async function apiRequest(endpoint, method = "GET", body = null, authRequired = false) {
+  const headers = { "Content-Type": "application/json" };
+  if (authRequired) {
+    const token = getAuthToken();
+    if (token) headers["Authorization"] = `Bearer ${token}`;
   }
+  const options = { method, headers };
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(`${BASE_URL}${endpoint}`, options);
+  return response.json();
 }
 
 // Fetch tax summary
 async function fetchTaxSummary() {
   try {
     const userId = getUserId();
-    if (!userId) {
-      console.error("❌ No user ID found");
-      return;
-    }
-
-    console.log("📤 Fetching tax summary for user:", userId);
-
+    if (!userId) return;
+    
     const data = await apiRequest(`/tax/summary/${userId}`, "GET", null, true);
-
-    console.log("📥 Tax summary response:", data);
-
+    
     if (data.success && data.data) {
       updateTaxData(data.data);
     } else {
-      console.warn("⚠️ No tax data available yet");
-      updateTaxData({
-        totalPayable: 0,
-        totalPaid: 0,
-        totalUnpaid: 0,
-        paidPercentage: 0,
-        unpaidPercentage: 0
-      });
+      updateTaxData({ totalPayable: 0, totalPaid: 0, totalUnpaid: 0, paidPercentage: 0, unpaidPercentage: 0 });
     }
   } catch (error) {
-    console.warn("⚠️ Tax API error:", error.message);
-    updateTaxData({
-      totalPayable: 0,
-      totalPaid: 0,
-      totalUnpaid: 0,
-      paidPercentage: 0,
-      unpaidPercentage: 0
-    });
+    console.warn("Tax API error:", error);
+    updateTaxData({ totalPayable: 0, totalPaid: 0, totalUnpaid: 0, paidPercentage: 0, unpaidPercentage: 0 });
   }
 }
 
-// Update income data
-function updateIncomeData(incomeData) {
-  const totalIncome = incomeData?.totalIncome || 0;
-  const incomeElement = document.querySelector(".tax-income h1");
-  
-  if (incomeElement) {
-    incomeElement.textContent = `₦${totalIncome.toLocaleString()}`;
-    console.log("✅ Updated income display:", totalIncome);
-  }
-}
-
-// Update tax data on dashboard
+// Update tax data
 function updateTaxData(taxData) {
-  console.log("📊 Updating tax data:", taxData);
-
-  // Update Total Payable
-  const payableElement = document.querySelector(".tax-payable h1");
-  if (payableElement) {
-    payableElement.textContent = `₦${(taxData.totalPayable || 0).toLocaleString()}`;
-  }
-
-  // Update Unpaid
-  const unpaidElement = document.querySelector(".tax-unpaid h1");
-  if (unpaidElement) {
-    unpaidElement.textContent = `₦${(taxData.totalUnpaid || 0).toLocaleString()}`;
-  }
-
-  // Update Paid
-  const paidElement = document.querySelector(".tax-paid h1");
-  if (paidElement) {
-    paidElement.textContent = `₦${(taxData.totalPaid || 0).toLocaleString()}`;
-  }
-
-  // Update progress bars
+  const payable = document.querySelector(".tax-payable h1");
+  const unpaid = document.querySelector(".tax-unpaid h1");
+  const paid = document.querySelector(".tax-paid h1");
+  const income = document.querySelector(".tax-income h1");
+  
+  if (payable) payable.textContent = `₦${(taxData.totalPayable || 0).toLocaleString()}`;
+  if (unpaid) unpaid.textContent = `₦${(taxData.totalUnpaid || 0).toLocaleString()}`;
+  if (paid) paid.textContent = `₦${(taxData.totalPaid || 0).toLocaleString()}`;
+  if (income) income.textContent = `₦0`;
+  
   const paidBar = document.getElementById("paid-bar");
   const unpaidBar = document.getElementById("unpaid-bar");
   const paidPercent = document.getElementById("paid-percent");
   const unpaidPercent = document.getElementById("unpaid-percent");
-
+  
   if (paidBar) paidBar.style.width = `${taxData.paidPercentage || 0}%`;
   if (unpaidBar) unpaidBar.style.width = `${taxData.unpaidPercentage || 0}%`;
   if (paidPercent) paidPercent.textContent = `${Math.round(taxData.paidPercentage || 0)}%`;
   if (unpaidPercent) unpaidPercent.textContent = `${Math.round(taxData.unpaidPercentage || 0)}%`;
-
-  console.log("✅ Updated tax dashboard");
 }
 
-// Handle date filters
+// Setup filters
 function setupDateFilters() {
   const monthSelect = document.querySelector('select[name="month"]');
   const yearSelect = document.querySelector('select[name="year"]');
-
-  if (monthSelect) {
-    monthSelect.addEventListener("change", refreshDashboardData);
-    console.log("✅ Month filter setup");
-  }
   
-  if (yearSelect) {
-    yearSelect.addEventListener("change", refreshDashboardData);
-    console.log("✅ Year filter setup");
-  }
+  if (monthSelect) monthSelect.addEventListener("change", fetchTaxSummary);
+  if (yearSelect) yearSelect.addEventListener("change", fetchTaxSummary);
 }
 
-function refreshDashboardData() {
-  console.log("🔄 Refreshing dashboard data...");
-  fetchIncomeExpenseSummary();
-  fetchTaxSummary();
-}
-
+// Initialize
 function initializeDashboard() {
-  console.log("🚀 Initializing dashboard...");
-  
   const token = getAuthToken();
   const userId = getUserId();
-
-  console.log("🔐 Auth check:", { hasToken: !!token, userId });
-
+  
+  console.log("🚀 Dashboard initializing...");
+  console.log("Auth:", { hasToken: !!token, userId });
+  
   if (!token || !userId) {
-    console.warn("⚠️ User not authenticated, redirecting to login...");
     alert("⚠️ Please login first");
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 1500);
+    setTimeout(() => window.location.href = "login.html", 1000);
     return;
   }
-
+  
   updateUserInfo();
-  loadDashboardData();
-}
-
-function loadDashboardData() {
-  console.log("📊 Loading dashboard data...");
-  fetchIncomeExpenseSummary();
   fetchTaxSummary();
 }
 
+// Start when page loads
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("📄 Dashboard loaded");
+  console.log("📄 Dashboard page loaded");
   initializeDashboard();
   setupDateFilters();
 });
-
-// Auto-refresh every minute
-setInterval(() => {
-  const token = getAuthToken();
-  if (token) {
-    console.log("🔄 Auto-refreshing data...");
-    fetchIncomeExpenseSummary();
-    fetchTaxSummary();
-  }
-}, 60000);
