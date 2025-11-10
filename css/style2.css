@@ -1294,15 +1294,17 @@ textarea.group-input{
     margin-bottom: 15px;
 }
 
-.choose-text button {
+.consultation-btn{
     background: #1db954;
     color: #fff;
     border: none;
     padding: 12px 25px;
     border-radius: 6px;
     font-size: 1.4rem;
-    cursor: pointer;
     margin-top: 10px;
+    display: block;
+    text-align: center;
+    text-decoration: none;
 }
 
 .choose-text button:hover {
