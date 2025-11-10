@@ -1,4 +1,4 @@
-// dashboard.js - Complete with Tax Summary
+// dashboard.js - FIXED to show user name by force!
 const BASE_URL = "https://tax-tracker-backend.onrender.com/api";
 
 // Generic API helper
@@ -13,22 +13,32 @@ async function apiRequest(endpoint, method = "GET", body = null, authRequired = 
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, options);
-  return response.json();
+  try {
+    const response = await fetch(`${BASE_URL}${endpoint}`, options);
+    return response.json();
+  } catch (error) {
+    console.error("❌ API Request failed:", error);
+    return { success: false, message: error.message };
+  }
 }
 
-// LocalStorage helpers
+// LocalStorage helpers - IMPROVED
 function getUserId() {
+  // Try multiple possible storage locations
   const user = localStorage.getItem("user");
+  const userId = localStorage.getItem("userId");
+  
   if (user) {
     try {
       const userData = JSON.parse(user);
-      return userData.id || userData._id || userData.userId;
+      console.log("🔍 User data from localStorage:", userData);
+      return userData.id || userData._id || userData.userId || userId;
     } catch (e) {
       console.error("Error parsing user data:", e);
     }
   }
-  return localStorage.getItem("userId");
+  
+  return userId || "unknown";
 }
 
 function getAuthToken() {
@@ -36,17 +46,41 @@ function getAuthToken() {
 }
 
 function getUserName() {
+  console.log("🔍 Searching for user name in localStorage...");
+  
+  // Check ALL possible locations for the name
   const user = localStorage.getItem("user");
+  const storedName = localStorage.getItem("userName");
+  
   if (user) {
     try {
       const userData = JSON.parse(user);
-      const name = userData.fullname || userData.fullName || userData.name || userData.username;
-      if (name) return name;
+      console.log("📋 User data found:", userData);
+      
+      // Try EVERY possible name field
+      const name = userData.fullname || 
+                   userData.fullName || 
+                   userData.name || 
+                   userData.username ||
+                   userData.firstName ||
+                   `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+      
+      if (name) {
+        console.log("✅ Name found in user data:", name);
+        return name;
+      }
     } catch (e) {
       console.error("Error parsing user data:", e);
     }
   }
-  return localStorage.getItem("userName") || "User";
+  
+  if (storedName) {
+    console.log("✅ Name found in userName storage:", storedName);
+    return storedName;
+  }
+  
+  console.log("❌ No name found, using fallback");
+  return "Taxpayer"; // Fallback name
 }
 
 function getUserType() {
@@ -54,7 +88,7 @@ function getUserType() {
   if (user) {
     try {
       const userData = JSON.parse(user);
-      return userData.accountType || userData.account_type || "individual";
+      return userData.accountType || userData.account_type || userData.role || "individual";
     } catch (e) {
       console.error("Error parsing user data:", e);
     }
@@ -62,51 +96,109 @@ function getUserType() {
   return localStorage.getItem("accountType") || "individual";
 }
 
-// Update user info in header
+// Update user info in header - FORCEFULLY!
 function updateUserInfo() {
+  console.log("🔄 FORCE UPDATING USER INFO...");
+  
   const userName = getUserName();
   const userType = getUserType();
 
-  console.log("📊 Dashboard user info:", { userName, userType });
+  console.log("📊 Dashboard user info:", { 
+    userName, 
+    userType,
+    localStorage: {
+      user: localStorage.getItem("user"),
+      userName: localStorage.getItem("userName"),
+      userId: localStorage.getItem("userId"),
+      authToken: localStorage.getItem("authToken") ? "PRESENT" : "MISSING"
+    }
+  });
 
-  const userNameElement = document.querySelector(".user-info h2");
+  // Target ALL possible name display elements
+  const userNameElements = document.querySelectorAll(".user-info h2, .user-info h1, .user-info .desktop, .user-info .mobile");
   const userTypeElement = document.querySelector(".user-info span");
+  const welcomeText = document.querySelector(".user-info p");
 
-  if (userNameElement) {
-    userNameElement.textContent = userName;
-    console.log("✅ Updated user name display");
-  }
+  console.log(`🎯 Found ${userNameElements.length} name elements to update`);
 
+  // Update all name elements
+  userNameElements.forEach((element, index) => {
+    console.log(`✅ Updating name element ${index + 1}:`, element);
+    element.textContent = userName;
+    element.style.color = "#2D6A4F"; // Force visible color
+    element.style.fontWeight = "bold";
+  });
+
+  // Update account type
   if (userTypeElement) {
-    userTypeElement.textContent = `${userType} account`;
-    console.log("✅ Updated account type display");
+    userTypeElement.textContent = `${userType.charAt(0).toUpperCase() + userType.slice(1)} Account`;
+    userTypeElement.style.color = "#666";
+    console.log("✅ Updated account type:", userType);
   }
+
+  // Update welcome text if needed
+  if (welcomeText && welcomeText.textContent === "Welcome,") {
+    welcomeText.textContent = "Welcome back,";
+    console.log("✅ Updated welcome text");
+  }
+
+  // LAST RESORT: If no elements found, create one!
+  if (userNameElements.length === 0) {
+    console.log("⚠️ No name elements found, creating one...");
+    const userInfoDiv = document.querySelector(".user-info");
+    if (userInfoDiv) {
+      const forcedName = document.createElement("h2");
+      forcedName.textContent = userName;
+      forcedName.style.color = "#2D6A4F";
+      forcedName.style.fontSize = "24px";
+      forcedName.style.margin = "0";
+      userInfoDiv.appendChild(forcedName);
+      console.log("🚨 FORCED name display creation!");
+    }
+  }
+
+  console.log("🎉 USER NAME UPDATE COMPLETE!");
 }
 
-// Fetch income/expense summary
-async function fetchIncomeExpenseSummary() {
+// Fetch user profile data as backup
+async function fetchUserProfile() {
   try {
     const userId = getUserId();
-    if (!userId) {
-      console.error("❌ No user ID found");
+    const token = getAuthToken();
+    
+    console.log("📤 Fetching user profile for:", userId);
+    
+    if (!token) {
+      console.warn("❌ No auth token available");
       return;
     }
 
-    console.log("📤 Fetching income/expense summary for user:", userId);
+    const userType = getUserType();
+    const endpoint = userType === 'business' 
+      ? `/auth/business/profile` 
+      : `/auth/individual/profile`;
 
-    const data = await apiRequest(`/income-expense/${userId}/summary`, "GET", null, true);
+    console.log("🔗 Using endpoint:", endpoint);
 
-    console.log("📥 Income/expense response:", data);
+    const data = await apiRequest(endpoint, "GET", null, true);
+    
+    console.log("📥 Profile response:", data);
 
-    if (data.success) {
-      updateIncomeData(data.data);
-    } else {
-      console.warn("⚠️ Income/Expense API not available yet");
-      updateIncomeData({ totalIncome: 0 });
+    if (data.success && data.user) {
+      // Update localStorage with fresh user data
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
+      const name = data.user.fullname || data.user.fullName || data.user.name || data.user.username;
+      if (name) {
+        localStorage.setItem("userName", name);
+        console.log("✅ Updated user data from profile API:", name);
+      }
+      
+      // Force update display
+      updateUserInfo();
     }
   } catch (error) {
-    console.warn("⚠️ Income/Expense API not ready:", error.message);
-    updateIncomeData({ totalIncome: 0 });
+    console.warn("⚠️ Profile API not available:", error.message);
   }
 }
 
@@ -114,8 +206,8 @@ async function fetchIncomeExpenseSummary() {
 async function fetchTaxSummary() {
   try {
     const userId = getUserId();
-    if (!userId) {
-      console.error("❌ No user ID found");
+    if (!userId || userId === "unknown") {
+      console.error("❌ No valid user ID found");
       return;
     }
 
@@ -146,17 +238,6 @@ async function fetchTaxSummary() {
       paidPercentage: 0,
       unpaidPercentage: 0
     });
-  }
-}
-
-// Update income data
-function updateIncomeData(incomeData) {
-  const totalIncome = incomeData?.totalIncome || 0;
-  const incomeElement = document.querySelector(".tax-income h1");
-  
-  if (incomeElement) {
-    incomeElement.textContent = `₦${totalIncome.toLocaleString()}`;
-    console.log("✅ Updated income display:", totalIncome);
   }
 }
 
@@ -203,31 +284,33 @@ function setupDateFilters() {
 
   if (monthSelect) {
     monthSelect.addEventListener("change", refreshDashboardData);
-    console.log("✅ Month filter setup");
   }
   
   if (yearSelect) {
     yearSelect.addEventListener("change", refreshDashboardData);
-    console.log("✅ Year filter setup");
   }
 }
 
 function refreshDashboardData() {
   console.log("🔄 Refreshing dashboard data...");
-  fetchIncomeExpenseSummary();
   fetchTaxSummary();
 }
 
+// MAIN INITIALIZATION - AGGRESSIVE!
 function initializeDashboard() {
-  console.log("🚀 Initializing dashboard...");
+  console.log("🚀 FORCE INITIALIZING DASHBOARD...");
   
   const token = getAuthToken();
   const userId = getUserId();
 
-  console.log("🔐 Auth check:", { hasToken: !!token, userId });
+  console.log("🔐 Auth check:", { 
+    hasToken: !!token, 
+    userId,
+    tokenLength: token ? token.length : 0
+  });
 
-  if (!token || !userId) {
-    console.warn("⚠️ User not authenticated, redirecting to login...");
+  if (!token) {
+    console.warn("⚠️ No auth token found, redirecting to login...");
     alert("⚠️ Please login first");
     setTimeout(() => {
       window.location.href = "login.html";
@@ -235,28 +318,43 @@ function initializeDashboard() {
     return;
   }
 
+  // IMMEDIATE name display
   updateUserInfo();
-  loadDashboardData();
+  
+  // Try to fetch profile as backup
+  setTimeout(fetchUserProfile, 500);
+  
+  // Load other data
+  setTimeout(loadDashboardData, 1000);
+  
+  // EXTRA: Force update again after a delay to catch any rendering issues
+  setTimeout(updateUserInfo, 2000);
 }
 
 function loadDashboardData() {
   console.log("📊 Loading dashboard data...");
-  fetchIncomeExpenseSummary();
   fetchTaxSummary();
 }
 
+// DOM Ready - MULTIPLE ATTEMPTS!
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("📄 Dashboard loaded");
+  console.log("📄 Dashboard DOM loaded - STARTING FORCE DISPLAY!");
+  
+  // First attempt
   initializeDashboard();
   setupDateFilters();
+  
+  // Second attempt after short delay (in case of slow rendering)
+  setTimeout(initializeDashboard, 100);
+  
+  // Third attempt after elements should be fully rendered
+  setTimeout(initializeDashboard, 500);
 });
 
-// Auto-refresh every minute
-setInterval(() => {
-  const token = getAuthToken();
-  if (token) {
-    console.log("🔄 Auto-refreshing data...");
-    fetchIncomeExpenseSummary();
-    fetchTaxSummary();
-  }
-}, 60000);
+// DEBUG: Add a manual refresh button in console
+console.log("🔧 Debug: Type 'forceName()' in console to manually refresh user name");
+window.forceName = function() {
+  console.log("🔄 MANUAL FORCE REFRESH TRIGGERED!");
+  updateUserInfo();
+  fetchUserProfile();
+};
