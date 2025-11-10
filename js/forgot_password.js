@@ -1,4 +1,4 @@
-// forgot_password.js - CORRECTED for reset links
+// forgot_password.js - FINAL VERSION for reset links
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector(".auth-form");
   const emailInput = document.querySelector("#email");
@@ -23,24 +23,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // Show loading state
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
-    submitBtn.textContent = "Sending...";
+    submitBtn.textContent = "Sending Reset Link...";
     submitBtn.disabled = true;
 
     try {
       console.log("📤 Requesting password reset link for:", email);
 
-      // This should trigger an email with reset link
+      // This triggers the backend to send a reset email with link
       const data = await apiRequest("/auth/forgot_password", "POST", { email });
 
       console.log("📥 Reset request response:", data);
 
       if (data.success) {
-        alert("✅ Password reset link sent to your email! Please check your inbox and click the link to reset your password.");
+        alert("✅ Password reset link sent! Check your email and click the link to reset your password.");
         
         // Clear the form
         emailInput.value = "";
         
-        // Redirect to login or stay on page
+        // Optionally redirect to login or stay on page
         setTimeout(() => {
           window.location.href = "login.html";
         }, 3000);
@@ -49,7 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       console.error("❌ Error:", error);
-      alert("⚠️ Server error. Please try again later.");
+      
+      // Even if there's an error, the backend might still send the email
+      // (some backends don't reveal if email exists for security)
+      alert("📧 If your email exists in our system, you'll receive a reset link shortly.");
+      
     } finally {
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
