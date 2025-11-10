@@ -52,17 +52,66 @@
   async function fetchTaxRecords() {
     console.log("🔄 Fetching tax records...");
     
-    if (!userId || !token) {
-      showEmpty("Please log in to view tax history.");
+    let allRecords = [];
+
+    // First try to get records from backend
+    if (userId && token) {
+      try {
+        const backendRecords = await fetchBackendRecords();
+        allRecords = [...allRecords, ...backendRecords];
+      } catch (error) {
+        console.error("❌ Backend fetch failed:", error);
+      }
+    }
+
+    // Then get records from localStorage
+    const localRecords = getLocalRecords();
+    allRecords = [...allRecords, ...localRecords];
+
+    console.log("📋 All records:", allRecords);
+
+    if (allRecords.length === 0) {
+      showEmpty("No tax records found. Calculate your first tax to see history.");
+      updateSummary([]);
       return;
     }
 
+    // Apply filters
+    let filteredRecords = allRecords;
+    
+    // Filter by month
+    const month = monthSelect?.value || "";
+    if (month) {
+      filteredRecords = filteredRecords.filter(record => 
+        record.month && record.month.toLowerCase().includes(month.toLowerCase())
+      );
+    }
+
+    // Filter by year
+    const year = yearSelect?.value || "";
+    if (year) {
+      filteredRecords = filteredRecords.filter(record => 
+        String(record.year) === year
+      );
+    }
+
+    // Filter by status
+    if (activeStatus) {
+      filteredRecords = filteredRecords.filter(record => 
+        record.paidStatus === activeStatus
+      );
+    }
+
+    console.log("✅ Filtered records:", filteredRecords);
+    updateSummary(filteredRecords);
+    renderRecords(filteredRecords);
+    showRecords();
+  }
+
+  async function fetchBackendRecords() {
     const month = monthSelect?.value || "";
     const year = yearSelect?.value || "";
     
-    console.log("📅 Filters - Month:", month, "Year:", year, "Status:", activeStatus);
-
-    // Build URL based on available parameters
     let url = `${API_BASE_URL}/tax/records`;
     const params = new URLSearchParams();
     
@@ -75,74 +124,62 @@
       url += `?${params.toString()}`;
     }
     
-    console.log("🌐 API URL:", url);
+    console.log("🌐 Backend API URL:", url);
     
+    const res = await fetch(url, { 
+      headers: authHeaders() 
+    });
+    
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+    
+    const payload = await res.json();
+    console.log("📥 Backend records response:", payload);
+
+    if (!payload.success || !payload.data) {
+      return [];
+    }
+
+    return payload.data.map(record => ({
+      id: record.id || record._id,
+      period: record.month && record.taxYear ? `${record.month} ${record.taxYear}` : "N/A",
+      taxableIncome: `₦${parseFloat(record.totalIncome || record.income || 0).toLocaleString()}`,
+      taxAmount: `₦${parseFloat(record.taxAmount || record.taxPayable || 0).toLocaleString()}`,
+      paidStatus: record.paidStatus || (record.isPaid ? "paid" : "unpaid"),
+      paidOn: record.paidOn || record.paidDate || "Not Paid",
+      paidAmount: parseFloat(record.paidAmount || (record.paidStatus === "paid" ? (record.taxAmount || record.taxPayable || 0) : 0)),
+      rawIncome: parseFloat(record.totalIncome || record.income || 0),
+      rawTaxAmount: parseFloat(record.taxAmount || record.taxPayable || 0),
+      month: record.month,
+      year: record.taxYear,
+      source: "backend"
+    }));
+  }
+
+  function getLocalRecords() {
     try {
-      const res = await fetch(url, { 
-        headers: authHeaders() 
-      });
+      const localRecords = JSON.parse(localStorage.getItem("localTaxRecords") || "[]");
+      console.log("💾 Local records:", localRecords);
       
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
-      
-      const payload = await res.json();
-      console.log("📥 Tax records response:", payload);
-
-      if (!payload.success || !payload.data || payload.data.length === 0) {
-        showEmpty("No tax records found. Calculate your first tax to see history.");
-        updateSummary([]);
-        return;
-      }
-
-      // Process records
-      const records = payload.data.map(record => {
-        console.log("📋 Processing record:", record);
-        
-        // Extract values with fallbacks
-        const totalIncome = record.totalIncome || record.income || 0;
-        const taxAmount = record.taxAmount || record.taxPayable || 0;
-        const paidAmount = record.paidAmount || (record.paidStatus === "paid" ? taxAmount : 0);
-        
-        // Determine paid status
-        let paidStatus = record.paidStatus || "unpaid";
-        if (record.isPaid !== undefined) {
-          paidStatus = record.isPaid ? "paid" : "unpaid";
-        }
-        
-        // Format period
-        let period = "N/A";
-        if (record.month && record.taxYear) {
-          period = `${record.month} ${record.taxYear}`;
-        } else if (record.period) {
-          period = record.period;
-        } else if (record.createdAt) {
-          period = new Date(record.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        }
-
-        return {
-          id: record.id || record._id,
-          period: period,
-          taxableIncome: `₦${parseFloat(totalIncome).toLocaleString()}`,
-          taxAmount: `₦${parseFloat(taxAmount).toLocaleString()}`,
-          paidStatus: paidStatus,
-          paidOn: record.paidOn || record.paidDate || "Not Paid",
-          paidAmount: parseFloat(paidAmount),
-          rawIncome: parseFloat(totalIncome),
-          rawTaxAmount: parseFloat(taxAmount),
-          month: record.month,
-          year: record.taxYear
-        };
-      });
-
-      console.log("✅ Processed records:", records);
-      updateSummary(records);
-      renderRecords(records);
-      showRecords();
-      
-    } catch (err) {
-      console.error("❌ fetchTaxRecords error:", err);
-      showEmpty("Failed to load tax history. Please try again later.");
+      return localRecords.map(record => ({
+        id: record.id,
+        period: record.month && record.year ? `${record.month} ${record.year}` : "N/A",
+        taxableIncome: `₦${parseFloat(record.income || 0).toLocaleString()}`,
+        taxAmount: `₦${parseFloat(record.taxAmount || 0).toLocaleString()}`,
+        paidStatus: record.paidStatus || "unpaid",
+        paidOn: record.paidOn || "Not Paid",
+        paidAmount: parseFloat(record.paidAmount || 0),
+        rawIncome: parseFloat(record.income || 0),
+        rawTaxAmount: parseFloat(record.taxAmount || 0),
+        month: record.month,
+        year: record.year,
+        source: "local",
+        local: true
+      }));
+    } catch (error) {
+      console.error("❌ Error reading local records:", error);
+      return [];
     }
   }
 
@@ -170,9 +207,11 @@
     const isPaid = record.paidStatus === "paid";
     const paidOn = record.paidOn === "Not Paid" ? "Pending" : 
                   new Date(record.paidOn).toLocaleDateString();
+    const isLocal = record.local || record.source === "local";
     
     return `
-      <div class="paid-state" data-id="${record.id}">
+      <div class="paid-state" data-id="${record.id}" data-source="${record.source}">
+        ${isLocal ? '<div class="local-badge">Local</div>' : ''}
         <div class="paid-top">
           <p class="paid-top_head">${record.period}</p>
           <p class="paid-top_body ${isPaid ? "paid_green" : ""}">${isPaid ? "Paid" : "Unpaid"}</p>
@@ -193,7 +232,7 @@
             <p class="paid-text_bottom">${paidOn}</p>
           </div>
         </div>
-        ${isPaid ? '' : `<button class="paid-btn unpaid-btn mark-as-paid" data-id="${record.id}">
+        ${isPaid ? '' : `<button class="paid-btn unpaid-btn mark-as-paid" data-id="${record.id}" data-source="${record.source}">
           <i class="ph ph-check"></i> Mark as Paid
         </button>`}
       </div>
@@ -214,6 +253,7 @@
     document.querySelectorAll(".mark-as-paid").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const id = btn.getAttribute("data-id");
+        const source = btn.getAttribute("data-source");
         const record = records.find(r => String(r.id) === String(id));
         if (record) {
           console.log("🔄 Mark as paid clicked for record:", record);
@@ -246,41 +286,59 @@
     });
   }
 
-  async function markAsPaidRequest(recordId) {
-    if (!userId || !token) {
-      console.error("❌ No auth for mark as paid");
-      return { success: false, message: "Not authenticated" };
-    }
-    
-    try {
-      const url = `${API_BASE_URL}/tax/mark-paid/${recordId}`;
-      console.log("📤 Marking as paid:", url);
-      
-      const requestBody = {
-        paidOn: new Date().toISOString(),
-        paidAmount: selectedRecord.rawTaxAmount,
-        paidStatus: "paid"
-      };
-      
-      console.log("📦 Request body:", requestBody);
-      
-      const res = await fetch(url, {
-        method: "PATCH",
-        headers: authHeaders(),
-        body: JSON.stringify(requestBody)
+  async function markAsPaidRequest(recordId, isLocal = false) {
+    if (isLocal) {
+      // Update local record
+      const localRecords = JSON.parse(localStorage.getItem("localTaxRecords") || "[]");
+      const updatedRecords = localRecords.map(record => {
+        if (record.id === recordId) {
+          return {
+            ...record,
+            paidStatus: "paid",
+            paidOn: new Date().toISOString(),
+            paidAmount: record.taxAmount
+          };
+        }
+        return record;
       });
-      
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      localStorage.setItem("localTaxRecords", JSON.stringify(updatedRecords));
+      return { success: true, message: "Local record updated" };
+    } else {
+      // Update backend record
+      if (!userId || !token) {
+        return { success: false, message: "Not authenticated" };
       }
       
-      const data = await res.json();
-      console.log("📥 Mark as paid response:", data);
-      return data;
-      
-    } catch (err) {
-      console.error("❌ markAsPaidRequest error:", err);
-      return { success: false, message: "Request failed: " + err.message };
+      try {
+        const url = `${API_BASE_URL}/tax/mark-paid/${recordId}`;
+        console.log("📤 Marking as paid:", url);
+        
+        const requestBody = {
+          paidOn: new Date().toISOString(),
+          paidAmount: selectedRecord.rawTaxAmount,
+          paidStatus: "paid"
+        };
+        
+        console.log("📦 Request body:", requestBody);
+        
+        const res = await fetch(url, {
+          method: "PATCH",
+          headers: authHeaders(),
+          body: JSON.stringify(requestBody)
+        });
+        
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
+        const data = await res.json();
+        console.log("📥 Mark as paid response:", data);
+        return data;
+        
+      } catch (err) {
+        console.error("❌ markAsPaidRequest error:", err);
+        return { success: false, message: "Request failed: " + err.message };
+      }
     }
   }
 
@@ -296,7 +354,8 @@
       confirmPaymentBtn.disabled = true;
       confirmPaymentBtn.textContent = "Processing...";
       
-      const resp = await markAsPaidRequest(selectedRecord.id);
+      const isLocal = selectedRecord.local || selectedRecord.source === "local";
+      const resp = await markAsPaidRequest(selectedRecord.id, isLocal);
       
       confirmPaymentBtn.disabled = false;
       confirmPaymentBtn.textContent = "Confirm Payment";
@@ -354,17 +413,8 @@
     });
   }
 
-  // Debug function
-  function debugAuth() {
-    console.log("🔍 Auth Debug:");
-    console.log("User ID:", userId);
-    console.log("Token exists:", !!token);
-    console.log("Full user data:", localStorage.getItem("user"));
-  }
-
   // Initialize
   console.log("🚀 Initializing tax history...");
-  debugAuth();
   fetchTaxRecords();
 
   // Also fetch when page becomes visible

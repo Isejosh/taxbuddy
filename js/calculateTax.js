@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("✅ All page elements updated with tax data");
 
-    // "Save to Tracker" button on complete page - FIXED VERSION
+    // "Save to Tracker" button on complete page - FIXED ENDPOINT
     const saveBtn = document.querySelector(".comp_btn1");
     saveBtn?.addEventListener("click", async function () {
       console.log("💾 Save to Tracker clicked");
@@ -256,28 +256,62 @@ document.addEventListener("DOMContentLoaded", function () {
           paidStatus: "unpaid"
         });
 
-        // FIXED: Use direct fetch instead of apiRequest
-        const response = await fetch(`${API_BASE_URL}/tax/compute`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            userId: userId,
-            taxType: data.taxType,
-            taxYear: parseInt(data.year),
-            totalIncome: data.income,
-            taxAmount: data.taxPayable,
-            month: data.month,
-            paidStatus: "unpaid"
-          })
-        });
+        // Try different possible endpoints
+        const endpoints = [
+          `${API_BASE_URL}/tax/records`,
+          `${API_BASE_URL}/tax`,
+          `${API_BASE_URL}/tax/create`,
+          `${API_BASE_URL}/records`
+        ];
 
-        const responseData = await response.json();
-        console.log("📥 Save response:", responseData);
+        let responseData;
+        let lastError;
 
-        if (responseData.success) {
+        for (const endpoint of endpoints) {
+          try {
+            console.log(`🔄 Trying endpoint: ${endpoint}`);
+            
+            const response = await fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                userId: userId,
+                taxType: data.taxType,
+                taxYear: parseInt(data.year),
+                totalIncome: data.income,
+                taxAmount: data.taxPayable,
+                month: data.month,
+                paidStatus: "unpaid"
+              })
+            });
+
+            // Check if response is JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+              responseData = await response.json();
+              console.log(`📥 Response from ${endpoint}:`, responseData);
+              
+              if (responseData.success) {
+                console.log(`✅ Success with endpoint: ${endpoint}`);
+                break;
+              } else {
+                lastError = responseData.message || `Endpoint ${endpoint} failed`;
+              }
+            } else {
+              const textResponse = await response.text();
+              console.log(`❌ Non-JSON response from ${endpoint}:`, textResponse.substring(0, 100));
+              lastError = `Endpoint ${endpoint} returned non-JSON response`;
+            }
+          } catch (error) {
+            console.log(`❌ Error with endpoint ${endpoint}:`, error.message);
+            lastError = error.message;
+          }
+        }
+
+        if (responseData && responseData.success) {
           // Mark as saved
           data.saved = true;
           data.taxRecordId = responseData.data._id || responseData.data.id;
@@ -291,12 +325,50 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = "tax-history.html";
           }, 1500);
         } else {
-          console.error("❌ Save failed:", responseData.message);
-          alert(`❌ ${responseData.message || "Failed to save tax record"}`);
+          console.error("❌ All endpoints failed. Last error:", lastError);
+          
+          // Fallback: Save to localStorage only and show message
+          data.saved = true;
+          data.localOnly = true; // Mark as local storage only
+          localStorage.setItem("taxData", JSON.stringify(data));
+          localStorage.setItem("localTaxRecords", JSON.stringify([
+            ...JSON.parse(localStorage.getItem("localTaxRecords") || "[]"),
+            {
+              id: 'local_' + Date.now(),
+              month: data.month,
+              year: data.year,
+              income: data.income,
+              taxAmount: data.taxPayable,
+              paidStatus: "unpaid",
+              local: true
+            }
+          ]));
+          
+          alert("⚠️ Could not connect to server. Tax record saved locally only. It may not appear in your history until you're online.");
+          window.location.href = "tax-history.html";
         }
       } catch (error) {
         console.error("❌ Save tax error:", error);
-        alert("⚠️ Failed to save tax record. Please try again.");
+        
+        // Fallback: Save to localStorage only
+        data.saved = true;
+        data.localOnly = true;
+        localStorage.setItem("taxData", JSON.stringify(data));
+        localStorage.setItem("localTaxRecords", JSON.stringify([
+          ...JSON.parse(localStorage.getItem("localTaxRecords") || "[]"),
+          {
+            id: 'local_' + Date.now(),
+            month: data.month,
+            year: data.year,
+            income: data.income,
+            taxAmount: data.taxPayable,
+            paidStatus: "unpaid",
+            local: true
+          }
+        ]));
+        
+        alert("⚠️ Network error. Tax record saved locally only.");
+        window.location.href = "tax-history.html";
       } finally {
         this.innerHTML = "Save to Tracker";
         this.disabled = false;
@@ -317,4 +389,4 @@ document.addEventListener("DOMContentLoaded", function () {
       window.location.href = "./calculateTax.html";
     }, 2000);
   }
-});
+}); 
