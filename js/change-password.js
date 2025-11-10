@@ -1,20 +1,21 @@
-// change-password.js - Fixed endpoint
+// change-password.js - FIXED to match Postman exactly
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector(".pword-reset-container") || document.querySelector("form");
+  const form = document.querySelector(".pword-reset-container");
   const currentPassword = document.getElementById("currentPassword");
   const newPassword = document.getElementById("newPassword");
   const confirmPassword = document.getElementById("confirmPassword");
-  const updateBtn = form.querySelector(".save-btn") || form.querySelector('button[type="submit"]');
+  const updateBtn = form.querySelector(".save-btn");
   const backBtn = form.querySelector(".logout-btn");
 
+  // Check authentication
   const token = getAuthToken();
-  const userId = getUserId();
-
-  if (!token || !userId) {
+  if (!token) {
     alert("⚠️ Session expired. Please log in again.");
     window.location.href = "login.html";
     return;
   }
+
+  console.log("🔑 User authenticated, token found");
 
   // Handle password change
   form.addEventListener("submit", async (e) => {
@@ -24,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const newPass = newPassword.value.trim();
     const confirmPass = confirmPassword.value.trim();
 
+    // Validation
     if (!oldPass || !newPass || !confirmPass) {
       alert("⚠️ Please fill in all fields.");
       return;
@@ -39,16 +41,23 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Show loading state
     updateBtn.textContent = "Updating...";
     updateBtn.disabled = true;
 
     try {
       console.log("📤 Changing password...");
 
-      const data = await apiRequest("/auth/users/change_password", "PATCH", {
-        old_password: oldPass,
-        new_password: newPass,
-      }, true);
+      // Use EXACT payload structure from Postman
+      const requestBody = {
+        oldPassword: oldPass,  // Note: camelCase, not snake_case
+        newPassword: newPass   // Note: camelCase, not snake_case
+      };
+
+      console.log("📦 Request payload:", requestBody);
+
+      // Make the API request with authentication
+      const data = await apiRequest("/auth/users/change_password", "PATCH", requestBody, true);
 
       console.log("📥 Change password response:", data);
 
@@ -56,12 +65,20 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("✅ Password updated successfully! Please login again with your new password.");
         
         // Clear session and redirect to login
-        localStorage.clear();
+        clearUserData();
         setTimeout(() => {
           window.location.href = "login.html";
-        }, 1500);
+        }, 2000);
       } else {
-        alert(`❌ ${data.message || "Failed to update password."}`);
+        // Show specific error message from backend
+        const errorMsg = data.message || "Failed to update password. Please check your current password.";
+        alert(`❌ ${errorMsg}`);
+        
+        // Clear password fields on error
+        currentPassword.value = "";
+        newPassword.value = "";
+        confirmPassword.value = "";
+        currentPassword.focus();
       }
     } catch (error) {
       console.error("❌ Error:", error);
@@ -72,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Back button
+  // Back button handler
   if (backBtn) {
     backBtn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -80,21 +97,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Helper functions
-  function getUserId() {
-    const user = localStorage.getItem("user");
-    if (user) {
-      try {
-        const userData = JSON.parse(user);
-        return userData.id || userData._id || userData.userId;
-      } catch (e) {
-        console.error("Error parsing user data:", e);
-      }
-    }
-    return localStorage.getItem("userId");
-  }
-
+  // Helper functions (reuse from api.js)
   function getAuthToken() {
     return localStorage.getItem("authToken") || localStorage.getItem("token");
+  }
+
+  function clearUserData() {
+    localStorage.removeItem("user");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("token");
+    localStorage.removeItem("accountType");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("email");
   }
 });
