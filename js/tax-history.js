@@ -28,7 +28,10 @@
 
   function authHeaders() {
     return token
-      ? { Authorization: "Bearer " + token, "Content-Type": "application/json" }
+      ? { 
+          Authorization: "Bearer " + token, 
+          "Content-Type": "application/json" 
+        }
       : { "Content-Type": "application/json" };
   }
 
@@ -78,15 +81,42 @@
       }
 
       // Process records to ensure proper format
-      const records = payload.data.map(record => ({
-        id: record.id || record._id,
-        period: record.month ? `${record.month} ${record.taxYear}` : record.period || "N/A",
-        taxableIncome: record.totalIncome ? `₦${record.totalIncome.toLocaleString()}` : record.taxableIncome || "₦0",
-        taxAmount: record.taxAmount ? `₦${record.taxAmount.toLocaleString()}` : "₦0",
-        paidStatus: record.paidStatus || (record.isPaid ? "paid" : "unpaid"),
-        paidOn: record.paidOn || record.paidDate || "Not Paid",
-        paidAmount: record.paidAmount || record.taxAmount || 0
-      }));
+      const records = payload.data.map(record => {
+        console.log("📋 Raw record:", record);
+        
+        // Extract numeric values safely
+        const totalIncome = record.totalIncome || record.income || 0;
+        const taxAmount = record.taxAmount || record.taxPayable || 0;
+        const paidAmount = record.paidAmount || (record.paidStatus === "paid" ? taxAmount : 0);
+        
+        // Determine paid status
+        let paidStatus = record.paidStatus || "unpaid";
+        if (record.isPaid !== undefined) {
+          paidStatus = record.isPaid ? "paid" : "unpaid";
+        }
+        
+        // Format period
+        let period = "N/A";
+        if (record.month && record.taxYear) {
+          period = `${record.month} ${record.taxYear}`;
+        } else if (record.period) {
+          period = record.period;
+        } else if (record.createdAt) {
+          period = new Date(record.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        }
+
+        return {
+          id: record.id || record._id,
+          period: period,
+          taxableIncome: `₦${parseFloat(totalIncome).toLocaleString()}`,
+          taxAmount: `₦${parseFloat(taxAmount).toLocaleString()}`,
+          paidStatus: paidStatus,
+          paidOn: record.paidOn || record.paidDate || "Not Paid",
+          paidAmount: parseFloat(paidAmount),
+          rawIncome: parseFloat(totalIncome),
+          rawTaxAmount: parseFloat(taxAmount)
+        };
+      });
 
       console.log("✅ Processed records:", records);
 
@@ -103,9 +133,10 @@
     const paid = records.filter(r => r.paidStatus === "paid");
     const unpaid = records.filter(r => r.paidStatus === "unpaid");
     const totalPaidAmount = paid.reduce((sum, r) => {
-      const amount = typeof r.paidAmount === 'number' ? r.paidAmount : 0;
-      return sum + amount;
+      return sum + (r.paidAmount || 0);
     }, 0);
+
+    console.log("📊 Summary:", { total: records.length, paid: paid.length, unpaid: unpaid.length, totalPaidAmount });
 
     if (summaryEls.total) summaryEls.total.textContent = records.length;
     if (summaryEls.paid) summaryEls.paid.textContent = paid.length;
@@ -184,16 +215,21 @@
     if (!userId || !token) return { success: false, message: "Not authenticated" };
     
     try {
-      const url = `${apiBase}/mark-paid/${userId}/${recordId}`;
+      const url = `${apiBase}/mark-paid/${recordId}`;
       console.log("📤 Marking as paid:", url);
+      
+      const requestBody = {
+        paidOn: new Date().toISOString(),
+        paidAmount: selectedRecord.rawTaxAmount,
+        paidStatus: "paid"
+      };
+      
+      console.log("📦 Request body:", requestBody);
       
       const res = await fetch(url, {
         method: "PATCH",
         headers: authHeaders(),
-        body: JSON.stringify({ 
-          paidOn: new Date().toISOString(),
-          amount: selectedRecord ? parseFloat(selectedRecord.taxAmount.replace(/[₦,]/g, "")) : 0
-        })
+        body: JSON.stringify(requestBody)
       });
       
       const data = await res.json();
@@ -222,7 +258,7 @@
         if (paymentModal) paymentModal.classList.remove("show");
         showToast();
         selectedRecord = null;
-        fetchTaxRecords();
+        fetchTaxRecords(); // Refresh the list
       } else {
         alert(`❌ ${resp.message || "Failed to mark as paid. Try again."}`);
       }
@@ -250,6 +286,16 @@
   if (monthSelect) monthSelect.addEventListener("change", fetchTaxRecords);
   if (yearSelect) yearSelect.addEventListener("change", fetchTaxRecords);
 
+  // Debug function to check what's in localStorage
+  function debugLocalStorage() {
+    console.log("🔍 localStorage debug:");
+    console.log("userId:", localStorage.getItem("userId"));
+    console.log("authToken:", localStorage.getItem("authToken") ? "Exists" : "Missing");
+    console.log("token:", localStorage.getItem("token") ? "Exists" : "Missing");
+    console.log("user:", localStorage.getItem("user"));
+  }
+
   // Initial load
+  debugLocalStorage();
   fetchTaxRecords();
 })();
