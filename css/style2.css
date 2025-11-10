@@ -1155,3 +1155,145 @@ textarea.group-input{
 
 
 
+/* Services Page */
+.comprehensive{
+    background: #f8f9fa;
+}
+.comprehensive-section {
+    text-align: center;
+    padding: 60px 8%;
+}
+
+.comprehensive-section h2 {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.comprehensive-section .intro {
+    color: #555;
+    margin-bottom: 4rem;
+    font-size: 1.6rem;
+}
+
+.comprehensive-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 25px;
+}
+
+.comprehensive-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 2.5rem;
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items:baseline;
+    
+}
+
+.comprehensive-card:hover {
+    transform: translateY(-5px);
+}
+
+.comprehensive-card h3 {
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+.comprehensive-card p {
+    font-size: 1.4rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.comprehensive-card ul {
+    list-style: none;
+}
+
+.comprehensive-card ul li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 6px;
+    color: #333;
+    font-size: 1.4rem;
+}
+
+.comprehensive-card ul li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: #1db954;
+    font-weight: 600;
+}
+
+/* Why Choose Section */
+.why-choose {
+    background: #fff;
+    margin: 70px 8%;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.choose-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.choose-text {
+    flex: 1;
+    padding: 40px;
+}
+
+.choose-text h2 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.reason h4 {
+    color: #222;
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.reason p {
+    color: #555;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.choose-text button {
+    background: #1db954;
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.choose-text button:hover {
+    background: #17a44d;
+}
+
+.choose-image {
+    flex: 1;
+    min-width: 300px;
+}
+
+.choose-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

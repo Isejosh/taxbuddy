@@ -52,12 +52,12 @@ a {
 /* Side Navigation */
 
 .side-nav {
-    flex: 25%;
-    border-right: 1px solid #bbbaba;
-    position: sticky;
-    bottom: 0px;
-    overflow: hidden;
-    padding: 20px;
+  flex: 15%;
+  border-right: 1px solid #bbbaba;
+  position: sticky;
+  bottom: 0px;
+  overflow: hidden;
+  padding: 20px;
 }
 
 .tax-buddy-img {
@@ -65,7 +65,7 @@ a {
 }
 
 .nav-links {
-    width: 1005;
+    width: 1005px;
     margin-top: 40px;
     gap: 40px;
     display: flex;
@@ -117,7 +117,7 @@ a {
 .sign-out-link {
     color: var(--white);
     padding: 8px 10px;
-    width: 90%;
+    width: 50%;
     text-align: center;
     border-radius: 8px;
     transition: transform 0.3s ease;
@@ -129,7 +129,7 @@ a {
 
 /* Container */
 
-.container {
+.ntn-container {
     flex: 1fr;
     padding: 15px 50px 15px 15px;
     width: 100%;
