@@ -142,7 +142,7 @@ body {
 }
 
 .user-info .mobile{
-  display: block;
+  display: none;
 }
 
 .user-info h2 {
