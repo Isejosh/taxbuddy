@@ -67,19 +67,30 @@ function updateUserInfo() {
   const userName = getUserName();
   const userType = getUserType();
 
-  console.log("ðŸ“Š Dashboard user info:", { userName, userType });
+  console.log("📊 Dashboard user info:", { userName, userType });
 
-  const userNameElement = document.querySelector(".user-info h2");
+  // Update ALL h2 elements inside user-info
+  const userNameElements = document.querySelectorAll(".user-info h2");
   const userTypeElement = document.querySelector(".user-info span");
 
-  if (userNameElement) {
-    userNameElement.textContent = userName;
-    console.log("âœ… Updated user name display");
+  // Set name for all h2 elements (mobile and desktop)
+  userNameElements.forEach(el => {
+    el.textContent = userName;
+  });
+  
+  if (userNameElements.length > 0) {
+    console.log("✅ Updated user name display:", userName);
+  } else {
+    console.warn("⚠️ User name element not found");
   }
 
   if (userTypeElement) {
-    userTypeElement.textContent = `${userType} account`;
-    console.log("âœ… Updated account type display");
+    // Capitalize first letter
+    const displayType = userType.charAt(0).toUpperCase() + userType.slice(1);
+    userTypeElement.textContent = `${displayType} account`;
+    console.log("✅ Updated account type display:", displayType);
+  } else {
+    console.warn("⚠️ Account type element not found");
   }
 }
 
@@ -88,24 +99,24 @@ async function fetchIncomeExpenseSummary() {
   try {
     const userId = getUserId();
     if (!userId) {
-      console.error("âŒ No user ID found");
+      console.error("❌ No user ID found");
       return;
     }
 
-    console.log("ðŸ“¤ Fetching income/expense summary for user:", userId);
+    console.log("📤 Fetching income/expense summary for user:", userId);
 
     const data = await apiRequest(`/income-expense/${userId}/summary`, "GET", null, true);
 
-    console.log("ðŸ“¥ Income/expense response:", data);
+    console.log("📥 Income/expense response:", data);
 
     if (data.success) {
       updateIncomeData(data.data);
     } else {
-      console.warn("âš ï¸ Income/Expense API not available yet");
+      console.warn("⚠️ Income/Expense API not available yet");
       updateIncomeData({ totalIncome: 0 });
     }
   } catch (error) {
-    console.warn("âš ï¸ Income/Expense API not ready:", error.message);
+    console.warn("⚠️ Income/Expense API not ready:", error.message);
     updateIncomeData({ totalIncome: 0 });
   }
 }
@@ -115,20 +126,20 @@ async function fetchTaxSummary() {
   try {
     const userId = getUserId();
     if (!userId) {
-      console.error("âŒ No user ID found");
+      console.error("❌ No user ID found");
       return;
     }
 
-    console.log("ðŸ“¤ Fetching tax summary for user:", userId);
+    console.log("📤 Fetching tax summary for user:", userId);
 
     const data = await apiRequest(`/tax/summary/${userId}`, "GET", null, true);
 
-    console.log("ðŸ“¥ Tax summary response:", data);
+    console.log("📥 Tax summary response:", data);
 
     if (data.success && data.data) {
       updateTaxData(data.data);
     } else {
-      console.warn("âš ï¸ No tax data available yet");
+      console.warn("⚠️ No tax data available yet");
       updateTaxData({
         totalPayable: 0,
         totalPaid: 0,
@@ -138,7 +149,7 @@ async function fetchTaxSummary() {
       });
     }
   } catch (error) {
-    console.warn("âš ï¸ Tax API error:", error.message);
+    console.warn("⚠️ Tax API error:", error.message);
     updateTaxData({
       totalPayable: 0,
       totalPaid: 0,
@@ -155,31 +166,31 @@ function updateIncomeData(incomeData) {
   const incomeElement = document.querySelector(".tax-income h1");
   
   if (incomeElement) {
-    incomeElement.textContent = `â‚¦${totalIncome.toLocaleString()}`;
-    console.log("âœ… Updated income display:", totalIncome);
+    incomeElement.textContent = `₦${totalIncome.toLocaleString()}`;
+    console.log("✅ Updated income display:", totalIncome);
   }
 }
 
 // Update tax data on dashboard
 function updateTaxData(taxData) {
-  console.log("ðŸ“Š Updating tax data:", taxData);
+  console.log("📊 Updating tax data:", taxData);
 
   // Update Total Payable
   const payableElement = document.querySelector(".tax-payable h1");
   if (payableElement) {
-    payableElement.textContent = `â‚¦${(taxData.totalPayable || 0).toLocaleString()}`;
+    payableElement.textContent = `₦${(taxData.totalPayable || 0).toLocaleString()}`;
   }
 
   // Update Unpaid
   const unpaidElement = document.querySelector(".tax-unpaid h1");
   if (unpaidElement) {
-    unpaidElement.textContent = `â‚¦${(taxData.totalUnpaid || 0).toLocaleString()}`;
+    unpaidElement.textContent = `₦${(taxData.totalUnpaid || 0).toLocaleString()}`;
   }
 
   // Update Paid
   const paidElement = document.querySelector(".tax-paid h1");
   if (paidElement) {
-    paidElement.textContent = `â‚¦${(taxData.totalPaid || 0).toLocaleString()}`;
+    paidElement.textContent = `₦${(taxData.totalPaid || 0).toLocaleString()}`;
   }
 
   // Update progress bars
@@ -193,7 +204,7 @@ function updateTaxData(taxData) {
   if (paidPercent) paidPercent.textContent = `${Math.round(taxData.paidPercentage || 0)}%`;
   if (unpaidPercent) unpaidPercent.textContent = `${Math.round(taxData.unpaidPercentage || 0)}%`;
 
-  console.log("âœ… Updated tax dashboard");
+  console.log("✅ Updated tax dashboard");
 }
 
 // Handle date filters
@@ -203,32 +214,32 @@ function setupDateFilters() {
 
   if (monthSelect) {
     monthSelect.addEventListener("change", refreshDashboardData);
-    console.log("âœ… Month filter setup");
+    console.log("✅ Month filter setup");
   }
   
   if (yearSelect) {
     yearSelect.addEventListener("change", refreshDashboardData);
-    console.log("âœ… Year filter setup");
+    console.log("✅ Year filter setup");
   }
 }
 
 function refreshDashboardData() {
-  console.log("ðŸ”„ Refreshing dashboard data...");
+  console.log("🔄 Refreshing dashboard data...");
   fetchIncomeExpenseSummary();
   fetchTaxSummary();
 }
 
 function initializeDashboard() {
-  console.log("ðŸš€ Initializing dashboard...");
+  console.log("🚀 Initializing dashboard...");
   
   const token = getAuthToken();
   const userId = getUserId();
 
-  console.log("ðŸ” Auth check:", { hasToken: !!token, userId });
+  console.log("🔐 Auth check:", { hasToken: !!token, userId });
 
   if (!token || !userId) {
-    console.warn("âš ï¸ User not authenticated, redirecting to login...");
-    alert("âš ï¸ Please login first");
+    console.warn("⚠️ User not authenticated, redirecting to login...");
+    alert("⚠️ Please login first");
     setTimeout(() => {
       window.location.href = "login.html";
     }, 1500);
@@ -240,13 +251,13 @@ function initializeDashboard() {
 }
 
 function loadDashboardData() {
-  console.log("ðŸ“Š Loading dashboard data...");
+  console.log("📊 Loading dashboard data...");
   fetchIncomeExpenseSummary();
   fetchTaxSummary();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("ðŸ“„ Dashboard loaded");
+  console.log("📄 Dashboard loaded");
   initializeDashboard();
   setupDateFilters();
 });
@@ -255,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
 setInterval(() => {
   const token = getAuthToken();
   if (token) {
-    console.log("ðŸ”„ Auto-refreshing data...");
+    console.log("🔄 Auto-refreshing data...");
     fetchIncomeExpenseSummary();
     fetchTaxSummary();
   }
