@@ -40,11 +40,10 @@ a {
 body {
   font-family: 'Poppins', sans-serif;
   display: flex;
-  gap: 20px;
 }
 
 .side-nav {
-  flex: 25%;
+  flex: 15%;
   border-right: 1px solid #bbbaba;
   position: sticky;
   bottom: 0px;
@@ -57,7 +56,7 @@ body {
 }
 
 .nav-links {
-  width: 1005;
+  width: 100%;
   margin-top: 40px;
   gap: 40px;
   display: flex;
@@ -96,7 +95,7 @@ body {
 }
 
 .link:hover {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   background-color: #080;
   border-radius: 8px;
   color: var(--white);
@@ -127,7 +126,7 @@ body {
   flex: 1fr;
   background: var(--white);
   padding: 40px;
-  width: 90%;
+  width: 100%;
   position: relative;
 }
 
@@ -142,9 +141,9 @@ body {
   display: none;
 }
 
-.user-info .mobile{
+/* .user-info .mobile{
   display: none;
-}
+} */
 
 .user-info h2 {
   margin: 5px 0;
@@ -502,7 +501,7 @@ body {
 
   .dashboard-container {
     background-color: var(--bg-color);
-    padding: 15px;
+    /* padding: 15px; */
   }
 
   .user-info p {
