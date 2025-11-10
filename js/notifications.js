@@ -1,5 +1,8 @@
 // notifications.js - Handle tax reminders and notifications
 document.addEventListener("DOMContentLoaded", async () => {
+  // Update user name in header if it exists
+  updateHeaderUserName();
+  
   const userId = getUserId();
   const token = getAuthToken();
 
@@ -10,6 +13,31 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   await loadReminders();
+
+  // Helper: Update header username
+  function updateHeaderUserName() {
+    const userNameElement = document.querySelector(".user-info h2");
+    if (userNameElement) {
+      const userName = getUserName();
+      userNameElement.textContent = userName;
+    }
+  }
+
+  function getUserName() {
+    const storedName = localStorage.getItem("userName");
+    if (storedName && storedName !== "User") return storedName;
+    
+    const user = localStorage.getItem("user");
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        return userData.fullname || userData.fullName || userData.name || userData.username || "User";
+      } catch (e) {
+        console.error("Error parsing user data:", e);
+      }
+    }
+    return "User";
+  }
 
   // Helper functions
   function getUserId() {

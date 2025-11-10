@@ -1,3 +1,4 @@
+// api.js - Regular Script Version (No Modules)
 const BASE_URL = "https://tax-tracker-backend.onrender.com/api";
 
 /**
@@ -112,12 +113,23 @@ function getUserType() {
 }
 
 function setUserData(userData, token) {
+  console.log("💾 Saving user data:", userData);
+  
   localStorage.setItem("user", JSON.stringify(userData));
-  localStorage.setItem("userId", userData.id || userData._id);
+  localStorage.setItem("userId", userData.id || userData._id || userData.userId);
   localStorage.setItem("authToken", token);
   localStorage.setItem("token", token);
-  localStorage.setItem("accountType", userData.accountType || "individual");
-  localStorage.setItem("userName", userData.name || "User");
+  localStorage.setItem("accountType", userData.accountType || userData.account_type || "individual");
+  
+  // Try multiple possible name fields from backend
+  const userName = userData.fullname || userData.fullName || userData.name || userData.username || "User";
+  localStorage.setItem("userName", userName);
+  
+  console.log("✅ User data saved:", { 
+    userId: userData.id, 
+    userName, 
+    accountType: userData.accountType || userData.account_type 
+  });
 }
 
 function clearUserData() {
@@ -128,4 +140,4 @@ function clearUserData() {
   localStorage.removeItem("accountType");
   localStorage.removeItem("userName");
   localStorage.removeItem("email");
-}
+}   

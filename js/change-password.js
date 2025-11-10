@@ -53,9 +53,13 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("📥 Change password response:", data);
 
       if (data.success) {
-        alert("✅ Password updated successfully!");
-        form.reset();
-        window.location.href = "profile-settings.html";
+        alert("✅ Password updated successfully! Please login again with your new password.");
+        
+        // Clear session and redirect to login
+        localStorage.clear();
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1500);
       } else {
         alert(`❌ ${data.message || "Failed to update password."}`);
       }

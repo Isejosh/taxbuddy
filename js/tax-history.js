@@ -1,12 +1,12 @@
 (function () {
   const apiBase = "https://tax-tracker-backend.onrender.com/api/tax";
   const userId = localStorage.getItem("userId");
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("authToken") || localStorage.getItem("token");
 
-  const recordsContainer = document.getElementById("recordsContainer");
-  const emptyState = document.getElementById("emptyState");
-  const monthSelect = document.getElementById("monthFilter");
-  const yearSelect = document.getElementById("yearFilter");
+  const recordsContainer = document.getElementById("recordsContainer") || document.querySelector(".records-container");
+  const emptyState = document.getElementById("emptyState") || document.querySelector(".empty-state");
+  const monthSelect = document.getElementById("monthFilter") || document.querySelector('select[name="month"]');
+  const yearSelect = document.getElementById("yearFilter") || document.querySelector('select[name="year"]');
   const tabs = Array.from(document.querySelectorAll(".tab"));
 
   const summaryEls = {
@@ -33,14 +33,19 @@
   }
 
   function showEmpty(msg) {
-    emptyState.style.display = "flex";
-    recordsContainer.style.display = "none";
-    if (msg) document.getElementById("emptyText").textContent = msg;
+    if (emptyState) {
+      emptyState.style.display = "flex";
+    }
+    if (recordsContainer) {
+      recordsContainer.style.display = "none";
+    }
+    const emptyText = document.getElementById("emptyText");
+    if (msg && emptyText) emptyText.textContent = msg;
   }
 
   function showRecords() {
-    emptyState.style.display = "none";
-    recordsContainer.style.display = "block";
+    if (emptyState) emptyState.style.display = "none";
+    if (recordsContainer) recordsContainer.style.display = "block";
   }
 
   async function fetchTaxRecords() {
@@ -49,29 +54,47 @@
       return;
     }
 
-    const month = monthSelect.value || "";
-    const year = yearSelect.value || "";
+    const month = monthSelect?.value || "";
+    const year = yearSelect?.value || "";
     const params = new URLSearchParams();
-    if (month) params.append("month", month);
+    if (month && month !== "Month") params.append("month", month);
     if (year) params.append("year", year);
     if (activeStatus) params.append("status", activeStatus);
 
     const url = `${apiBase}/records/${userId}?${params.toString()}`;
+    
+    console.log("📤 Fetching tax records:", url);
+    
     try {
       const res = await fetch(url, { headers: authHeaders() });
       const payload = await res.json();
 
-      if (!payload.success || !Array.isArray(payload.data) || payload.data.length === 0) {
+      console.log("📥 Tax records response:", payload);
+
+      if (!payload.success || !payload.data || payload.data.length === 0) {
         showEmpty("No tax records found. Calculate your first tax to see history.");
         updateSummary([]);
         return;
       }
 
-      updateSummary(payload.data);
-      renderRecords(payload.data);
+      // Process records to ensure proper format
+      const records = payload.data.map(record => ({
+        id: record.id || record._id,
+        period: record.month ? `${record.month} ${record.taxYear}` : record.period || "N/A",
+        taxableIncome: record.totalIncome ? `₦${record.totalIncome.toLocaleString()}` : record.taxableIncome || "₦0",
+        taxAmount: record.taxAmount ? `₦${record.taxAmount.toLocaleString()}` : "₦0",
+        paidStatus: record.paidStatus || (record.isPaid ? "paid" : "unpaid"),
+        paidOn: record.paidOn || record.paidDate || "Not Paid",
+        paidAmount: record.paidAmount || record.taxAmount || 0
+      }));
+
+      console.log("✅ Processed records:", records);
+
+      updateSummary(records);
+      renderRecords(records);
       showRecords();
     } catch (err) {
-      console.error("fetchTaxRecords error", err);
+      console.error("❌ fetchTaxRecords error", err);
       showEmpty("Failed to load tax history. Try again later.");
     }
   }
@@ -80,19 +103,20 @@
     const paid = records.filter(r => r.paidStatus === "paid");
     const unpaid = records.filter(r => r.paidStatus === "unpaid");
     const totalPaidAmount = paid.reduce((sum, r) => {
-      const n = Number(String(r.paidAmount || r.taxAmount).replace(/[₦,]/g, ""));
-      return sum + (isNaN(n) ? 0 : n);
+      const amount = typeof r.paidAmount === 'number' ? r.paidAmount : 0;
+      return sum + amount;
     }, 0);
 
-    summaryEls.total.textContent = records.length;
-    summaryEls.paid.textContent = paid.length;
-    summaryEls.unpaid.textContent = unpaid.length;
-    summaryEls.amount.textContent = "₦" + totalPaidAmount.toLocaleString();
+    if (summaryEls.total) summaryEls.total.textContent = records.length;
+    if (summaryEls.paid) summaryEls.paid.textContent = paid.length;
+    if (summaryEls.unpaid) summaryEls.unpaid.textContent = unpaid.length;
+    if (summaryEls.amount) summaryEls.amount.textContent = "₦" + totalPaidAmount.toLocaleString();
   }
 
   function formatCard(record) {
-    const paidOn = record.paidOn || "Not Paid";
     const isPaid = record.paidStatus === "paid";
+    const paidOn = record.paidOn === "Not Paid" ? "Pending" : new Date(record.paidOn).toLocaleDateString();
+    
     return `
       <div class="paid-state" data-id="${record.id}">
         <div class="paid-top">
@@ -121,6 +145,8 @@
   }
 
   function renderRecords(records) {
+    if (!recordsContainer) return;
+    
     recordsContainer.innerHTML = "";
     records.forEach(r => recordsContainer.insertAdjacentHTML("beforeend", formatCard(r)));
 
@@ -136,54 +162,80 @@
 
   function openPaymentModal(record) {
     selectedRecord = record;
-    modalPeriod.textContent = record.period;
-    modalAmount.textContent = record.taxAmount;
-    paymentModal.classList.add("show");
-    paymentModal.setAttribute("aria-hidden", "false");
+    if (modalPeriod) modalPeriod.textContent = record.period;
+    if (modalAmount) modalAmount.textContent = record.taxAmount;
+    if (paymentModal) {
+      paymentModal.classList.add("show");
+      paymentModal.setAttribute("aria-hidden", "false");
+    }
   }
 
-  closeModalBtn.addEventListener("click", () => {
-    paymentModal.classList.remove("show");
-    paymentModal.setAttribute("aria-hidden", "true");
-    selectedRecord = null;
-  });
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener("click", () => {
+      if (paymentModal) {
+        paymentModal.classList.remove("show");
+        paymentModal.setAttribute("aria-hidden", "true");
+      }
+      selectedRecord = null;
+    });
+  }
 
   async function markAsPaidRequest(recordId) {
-    if (!userId || !token) return;
+    if (!userId || !token) return { success: false, message: "Not authenticated" };
+    
     try {
       const url = `${apiBase}/mark-paid/${userId}/${recordId}`;
+      console.log("📤 Marking as paid:", url);
+      
       const res = await fetch(url, {
         method: "PATCH",
         headers: authHeaders(),
-        body: JSON.stringify({ paidOn: new Date().toISOString() })
+        body: JSON.stringify({ 
+          paidOn: new Date().toISOString(),
+          amount: selectedRecord ? parseFloat(selectedRecord.taxAmount.replace(/[₦,]/g, "")) : 0
+        })
       });
-      return await res.json();
+      
+      const data = await res.json();
+      console.log("📥 Mark as paid response:", data);
+      
+      return data;
     } catch (err) {
-      console.error("markAsPaidRequest error", err);
+      console.error("❌ markAsPaidRequest error", err);
       return { success: false, error: "Request failed" };
     }
   }
 
-  confirmPaymentBtn.addEventListener("click", async () => {
-    if (!selectedRecord) return;
-    confirmPaymentBtn.disabled = true;
-    confirmPaymentBtn.textContent = "Processing...";
-    const resp = await markAsPaidRequest(selectedRecord.id);
-    confirmPaymentBtn.disabled = false;
-    confirmPaymentBtn.textContent = "Confirm Payment";
-    if (resp && resp.success) {
-      paymentModal.classList.remove("show");
-      showToast();
-      selectedRecord = null;
-      fetchTaxRecords();
-    } else {
-      alert("Failed to mark as paid. Try again.");
-    }
-  });
+  if (confirmPaymentBtn) {
+    confirmPaymentBtn.addEventListener("click", async () => {
+      if (!selectedRecord) return;
+      
+      confirmPaymentBtn.disabled = true;
+      confirmPaymentBtn.textContent = "Processing...";
+      
+      const resp = await markAsPaidRequest(selectedRecord.id);
+      
+      confirmPaymentBtn.disabled = false;
+      confirmPaymentBtn.textContent = "Confirm Payment";
+      
+      if (resp && resp.success) {
+        if (paymentModal) paymentModal.classList.remove("show");
+        showToast();
+        selectedRecord = null;
+        fetchTaxRecords();
+      } else {
+        alert(`❌ ${resp.message || "Failed to mark as paid. Try again."}`);
+      }
+    });
+  }
 
   function showToast() {
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 3000);
+    if (toast) {
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    } else {
+      alert("✅ Payment marked successfully!");
+    }
   }
 
   tabs.forEach(t => {
@@ -195,8 +247,9 @@
     });
   });
 
-  monthSelect.addEventListener("change", fetchTaxRecords);
-  yearSelect.addEventListener("change", fetchTaxRecords);
+  if (monthSelect) monthSelect.addEventListener("change", fetchTaxRecords);
+  if (yearSelect) yearSelect.addEventListener("change", fetchTaxRecords);
 
-  document.addEventListener("DOMContentLoaded", fetchTaxRecords);
+  // Initial load
+  fetchTaxRecords();
 })();
