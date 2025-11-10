@@ -140,4 +140,4 @@ function clearUserData() {
   localStorage.removeItem("accountType");
   localStorage.removeItem("userName");
   localStorage.removeItem("email");
-}   
+}
