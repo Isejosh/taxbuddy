@@ -1,34 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
   const incomeInput = document.querySelector("#incomeInput");
   const calculateBtn = document.querySelector("#calculateBtn");
-  const placeholder = document.querySelector(".placeholder");
-  const taxBreakdownSection = document.querySelector(".tax_breakdown");
-  const taxResult = document.querySelector(".taxbreakdown_result");
   const monthSelect = document.querySelector("#monthSelect");
   const yearSelect = document.querySelector("#yearSelect");
 
-  // API Base URL
+  // API Base URL - Updated to your deployed backend
   const API_BASE_URL = "https://tax-tracker-backend.onrender.com/api";
-
-  // Hide tax result at start
-  if (taxResult) {
-    taxResult.style.display = "none";
-  }
 
   // Enable button when valid input
   incomeInput?.addEventListener("input", () => {
-    if (
-      incomeInput.value.trim() === "" ||
-      isNaN(incomeInput.value) ||
-      incomeInput.value <= 0
-    ) {
+    if (incomeInput.value.trim() === "" || isNaN(incomeInput.value) || incomeInput.value <= 0) {
       calculateBtn.style.backgroundColor = "#a0c59e";
     } else {
       calculateBtn.style.backgroundColor = "#198754";
     }
   });
 
-  // Calculate button - LOCAL CALCULATION ONLY
+  // Calculate button
   calculateBtn?.addEventListener("click", async () => {
     const income = parseFloat(incomeInput.value);
     const month = monthSelect.value.trim();
@@ -57,34 +45,33 @@ document.addEventListener("DOMContentLoaded", function () {
       if (userType === "business") {
         // Business (CIT) - Corporate Income Tax
         if (income < 25000000) {
-          taxRate = 0.20; // 20% for small companies
+          taxRate = 0.20;
         } else {
-          taxRate = 0.30; // 30% for large companies
+          taxRate = 0.30;
         }
         taxPayable = income * taxRate;
         effectiveRate = (taxRate * 100).toFixed(2);
       } else {
-        // Individual (PIT) - Personal Income Tax (Nigerian Tax Brackets)
+        // Individual (PIT) - Personal Income Tax
         let tax = 0;
         
-        // Nigerian PIT brackets (simplified)
         if (income <= 300000) {
-          tax = income * 0.07; // 7%
+          tax = income * 0.07;
           taxRate = 0.07;
         } else if (income <= 600000) {
-          tax = (300000 * 0.07) + ((income - 300000) * 0.11); // 11%
+          tax = (300000 * 0.07) + ((income - 300000) * 0.11);
           taxRate = 0.11;
         } else if (income <= 1100000) {
-          tax = (300000 * 0.07) + (300000 * 0.11) + ((income - 600000) * 0.15); // 15%
+          tax = (300000 * 0.07) + (300000 * 0.11) + ((income - 600000) * 0.15);
           taxRate = 0.15;
         } else if (income <= 1600000) {
-          tax = (300000 * 0.07) + (300000 * 0.11) + (500000 * 0.15) + ((income - 1100000) * 0.19); // 19%
+          tax = (300000 * 0.07) + (300000 * 0.11) + (500000 * 0.15) + ((income - 1100000) * 0.19);
           taxRate = 0.19;
         } else if (income <= 3200000) {
-          tax = (300000 * 0.07) + (300000 * 0.11) + (500000 * 0.15) + (500000 * 0.19) + ((income - 1600000) * 0.21); // 21%
+          tax = (300000 * 0.07) + (300000 * 0.11) + (500000 * 0.15) + (500000 * 0.19) + ((income - 1600000) * 0.21);
           taxRate = 0.21;
         } else {
-          tax = (300000 * 0.07) + (300000 * 0.11) + (500000 * 0.15) + (500000 * 0.19) + (1600000 * 0.21) + ((income - 3200000) * 0.24); // 24%
+          tax = (300000 * 0.07) + (300000 * 0.11) + (500000 * 0.15) + (500000 * 0.19) + (1600000 * 0.21) + ((income - 3200000) * 0.24);
           taxRate = 0.24;
         }
         
@@ -106,20 +93,17 @@ document.addEventListener("DOMContentLoaded", function () {
           taxRatePercent: taxRate * 100,
           taxType: taxType,
           userType: userType,
-          saved: false, // Mark as not saved yet
+          saved: false,
         })
       );
 
-      console.log("💾 Tax data saved to localStorage:", JSON.parse(localStorage.getItem("taxData")));
-
-      // Redirect to completion page
+      console.log("💾 Tax data saved to localStorage");
       window.location.href = "./calculation_complete.html";
 
     } catch (error) {
       console.error("❌ Tax calculation error:", error);
       alert("⚠️ Error calculating tax. Please try again.");
     } finally {
-      // Reset button state
       calculateBtn.innerHTML = '<i class="ph ph-calculator"></i> Calculate';
       calculateBtn.disabled = false;
     }
@@ -219,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("✅ All page elements updated with tax data");
 
-    // "Save to Tracker" button on complete page - FIXED ENDPOINT
+    // "Save to Tracker" button on complete page - USING CORRECT ENDPOINT
     const saveBtn = document.querySelector(".comp_btn1");
     saveBtn?.addEventListener("click", async function () {
       console.log("💾 Save to Tracker clicked");
@@ -246,72 +230,36 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
-        console.log("📤 Saving tax record to backend:", {
-          userId: userId,
+        // CORRECT ENDPOINT AND DATA STRUCTURE FROM POSTMAN
+        const requestBody = {
           taxType: data.taxType,
-          taxYear: parseInt(data.year),
-          totalIncome: data.income,
-          taxAmount: data.taxPayable,
-          month: data.month,
-          paidStatus: "unpaid"
+          startDate: `${data.year}-01-01`, // Using year as start date
+          endDate: `${data.year}-12-31`,   // Using year as end date
+          turnover: data.income,           // Using 'turnover' field from Postman
+          month: data.month
+        };
+
+        console.log("📤 Saving tax record to backend:", requestBody);
+
+        const response = await fetch(`${API_BASE_URL}/tax/compute/${userId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestBody)
         });
 
-        // Try different possible endpoints
-        const endpoints = [
-          `${API_BASE_URL}/tax/records`,
-          `${API_BASE_URL}/tax`,
-          `${API_BASE_URL}/tax/create`,
-          `${API_BASE_URL}/records`
-        ];
+        console.log("📥 Response status:", response.status);
 
-        let responseData;
-        let lastError;
-
-        for (const endpoint of endpoints) {
-          try {
-            console.log(`🔄 Trying endpoint: ${endpoint}`);
-            
-            const response = await fetch(endpoint, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                userId: userId,
-                taxType: data.taxType,
-                taxYear: parseInt(data.year),
-                totalIncome: data.income,
-                taxAmount: data.taxPayable,
-                month: data.month,
-                paidStatus: "unpaid"
-              })
-            });
-
-            // Check if response is JSON
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.includes("application/json")) {
-              responseData = await response.json();
-              console.log(`📥 Response from ${endpoint}:`, responseData);
-              
-              if (responseData.success) {
-                console.log(`✅ Success with endpoint: ${endpoint}`);
-                break;
-              } else {
-                lastError = responseData.message || `Endpoint ${endpoint} failed`;
-              }
-            } else {
-              const textResponse = await response.text();
-              console.log(`❌ Non-JSON response from ${endpoint}:`, textResponse.substring(0, 100));
-              lastError = `Endpoint ${endpoint} returned non-JSON response`;
-            }
-          } catch (error) {
-            console.log(`❌ Error with endpoint ${endpoint}:`, error.message);
-            lastError = error.message;
-          }
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        if (responseData && responseData.success) {
+        const responseData = await response.json();
+        console.log("📥 Save response:", responseData);
+
+        if (responseData.success) {
           // Mark as saved
           data.saved = true;
           data.taxRecordId = responseData.data._id || responseData.data.id;
@@ -325,50 +273,12 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = "tax-history.html";
           }, 1500);
         } else {
-          console.error("❌ All endpoints failed. Last error:", lastError);
-          
-          // Fallback: Save to localStorage only and show message
-          data.saved = true;
-          data.localOnly = true; // Mark as local storage only
-          localStorage.setItem("taxData", JSON.stringify(data));
-          localStorage.setItem("localTaxRecords", JSON.stringify([
-            ...JSON.parse(localStorage.getItem("localTaxRecords") || "[]"),
-            {
-              id: 'local_' + Date.now(),
-              month: data.month,
-              year: data.year,
-              income: data.income,
-              taxAmount: data.taxPayable,
-              paidStatus: "unpaid",
-              local: true
-            }
-          ]));
-          
-          alert("⚠️ Could not connect to server. Tax record saved locally only. It may not appear in your history until you're online.");
-          window.location.href = "tax-history.html";
+          console.error("❌ Save failed:", responseData.message);
+          alert(`❌ ${responseData.message || "Failed to save tax record"}`);
         }
       } catch (error) {
         console.error("❌ Save tax error:", error);
-        
-        // Fallback: Save to localStorage only
-        data.saved = true;
-        data.localOnly = true;
-        localStorage.setItem("taxData", JSON.stringify(data));
-        localStorage.setItem("localTaxRecords", JSON.stringify([
-          ...JSON.parse(localStorage.getItem("localTaxRecords") || "[]"),
-          {
-            id: 'local_' + Date.now(),
-            month: data.month,
-            year: data.year,
-            income: data.income,
-            taxAmount: data.taxPayable,
-            paidStatus: "unpaid",
-            local: true
-          }
-        ]));
-        
-        alert("⚠️ Network error. Tax record saved locally only.");
-        window.location.href = "tax-history.html";
+        alert(`⚠️ Failed to save tax record: ${error.message}`);
       } finally {
         this.innerHTML = "Save to Tracker";
         this.disabled = false;
@@ -379,14 +289,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const calcAnother = document.querySelector(".comp_btn2");
     calcAnother?.addEventListener("click", () => {
       console.log("🔄 Calculate Another clicked");
-      localStorage.removeItem("taxData"); // Clear old data
+      localStorage.removeItem("taxData");
       window.location.href = "./calculateTax.html";
     });
   } else if (document.body.classList.contains("complete")) {
     console.warn("⚠️ No tax data found in localStorage!");
-    console.log("Redirecting to calculator...");
     setTimeout(() => {
       window.location.href = "./calculateTax.html";
     }, 2000);
   }
-}); 
+});
