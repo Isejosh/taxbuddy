@@ -36,10 +36,8 @@
   }
 
   function showEmpty(msg) {
-    if (emptyState) {
-      emptyState.style.display = "flex";
-      if (recordsContainer) recordsContainer.style.display = "none";
-    }
+    if (emptyState) emptyState.style.display = "flex";
+    if (recordsContainer) recordsContainer.style.display = "none";
     const emptyText = document.getElementById("emptyText");
     if (msg && emptyText) emptyText.textContent = msg;
   }
@@ -50,30 +48,16 @@
   }
 
   async function fetchTaxRecords() {
-    console.log("🔄 Fetching tax records...");
-    
     if (!userId || !token) {
       showEmpty("Please log in to view tax history.");
       return;
     }
 
     try {
-      // CORRECT ENDPOINT FROM POSTMAN: /api/tax/records/:userId
       const url = `${API_BASE_URL}/tax/records/${userId}`;
-      console.log("🌐 API URL:", url);
-      
-      const res = await fetch(url, { 
-        headers: authHeaders() 
-      });
-      
-      console.log("📥 Response status:", res.status);
-      
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
-      
+      const res = await fetch(url, { headers: authHeaders() });
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       const payload = await res.json();
-      console.log("📥 Tax records response:", payload);
 
       if (!payload.success || !payload.data || payload.data.length === 0) {
         showEmpty("No tax records found. Calculate your first tax to see history.");
@@ -81,49 +65,34 @@
         return;
       }
 
-      // Process records using correct field names from Postman
-const records = payload.data.map(record => {
-  console.log("📋 Processing record:", record);
+      // Process records safely
+      const records = payload.data.map(record => {
+        const totalIncome = parseFloat(record.totalIncome || record.income || record.turnover || 0);
+        const taxAmount = parseFloat(record.taxAmount || record.taxPayable || 0);
+        const paidStatus = record.isPaid ? "paid" : "unpaid";
+        const period = record.month && record.taxYear
+          ? `${record.month} ${record.taxYear}`
+          : record.createdAt
+          ? new Date(record.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+          : "N/A";
 
-  // Always parse numbers safely, fallback to 0
-  const rawIncome = parseFloat(record.totalIncome ?? record.income ?? record.turnover ?? 0) || 0;
-  const rawTaxAmount = parseFloat(record.taxAmount ?? record.taxPayable ?? 0) || 0;
+        return {
+          id: record._id || record.id,
+          period,
+          taxableIncome: `₦${totalIncome.toLocaleString()}`,
+          taxAmount: `₦${taxAmount.toLocaleString()}`,
+          paidStatus,
+          paidAmount: paidStatus === "paid" ? taxAmount : 0,
+          rawIncome: totalIncome,
+          rawTaxAmount: taxAmount,
+          month: record.month,
+          year: record.taxYear
+        };
+      });
 
-  // Determine paid status
-  let paidStatus = "unpaid";
-  if (record.paidStatus) paidStatus = record.paidStatus.toLowerCase();
-  if (record.isPaid !== undefined) paidStatus = record.isPaid ? "paid" : "unpaid";
-
-  // Determine period
-  let period = "N/A";
-  if (record.month && record.taxYear) {
-    period = `${record.month} ${record.taxYear}`;
-  } else if (record.month) {
-    period = `${record.month} ${new Date().getFullYear()}`;
-  } else if (record.createdAt) {
-    period = new Date(record.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  }
-
-  return {
-    id: record.id || record._id,
-    period: period,
-    taxableIncome: `₦${rawIncome.toLocaleString()}`,
-    taxAmount: `₦${rawTaxAmount.toLocaleString()}`,
-    paidStatus: paidStatus,
-    paidOn: record.paidOn || record.paidDate || "Not Paid",
-    paidAmount: parseFloat(record.paidAmount ?? (paidStatus === "paid" ? rawTaxAmount : 0)),
-    rawIncome: rawIncome,
-    rawTaxAmount: rawTaxAmount,
-    month: record.month,
-    year: record.taxYear
-  };
-});
-
-      console.log("✅ Processed records:", records);
       updateSummary(records);
       renderRecords(records);
       showRecords();
-      
     } catch (err) {
       console.error("❌ fetchTaxRecords error:", err);
       showEmpty("Failed to load tax history. Please try again later.");
@@ -131,29 +100,21 @@ const records = payload.data.map(record => {
   }
 
   function updateSummary(records) {
-  console.log("📊 Updating summary with records:", records);
+    const paid = records.filter(r => r.paidStatus === "paid");
+    const unpaid = records.filter(r => r.paidStatus === "unpaid");
+    const totalPaidAmount = paid.reduce((sum, r) => sum + (r.paidAmount || 0), 0);
 
-  const paidRecords = records.filter(r => r.paidStatus === "paid");
-  const unpaidRecords = records.filter(r => r.paidStatus === "unpaid");
-  const totalPaidAmount = paidRecords.reduce((sum, r) => sum + (r.rawTaxAmount || 0), 0);
-
-  console.log("📈 Summary stats:", { 
-    total: records.length, 
-    paid: paidRecords.length, 
-    unpaid: unpaidRecords.length, 
-    totalPaidAmount 
-  });
-
-  if (summaryEls.total) summaryEls.total.textContent = records.length;
-  if (summaryEls.paid) summaryEls.paid.textContent = paidRecords.length;
-  if (summaryEls.unpaid) summaryEls.unpaid.textContent = unpaidRecords.length;
-  if (summaryEls.amount) summaryEls.amount.textContent = `₦${totalPaidAmount.toLocaleString()}`;
-}
+    if (summaryEls.total) summaryEls.total.textContent = records.length;
+    if (summaryEls.paid) summaryEls.paid.textContent = paid.length;
+    if (summaryEls.unpaid) summaryEls.unpaid.textContent = unpaid.length;
+    if (summaryEls.amount) summaryEls.amount.textContent = "₦" + totalPaidAmount.toLocaleString();
+  }
 
   function formatCard(record) {
     const isPaid = record.paidStatus === "paid";
-    const paidOn = record.paidOn === "Not Paid" ? "Pending" : 
-                  new Date(record.paidOn).toLocaleDateString();
+    const paidOn = isPaid && record.paidOn !== "Not Paid"
+      ? new Date(record.paidOn).toLocaleDateString()
+      : "Pending";
     
     return `
       <div class="paid-state" data-id="${record.id}">
@@ -186,31 +147,20 @@ const records = payload.data.map(record => {
 
   function renderRecords(records) {
     if (!recordsContainer) return;
-    
-    console.log("🎨 Rendering records:", records.length);
     recordsContainer.innerHTML = "";
-    
-    records.forEach(record => {
-      recordsContainer.insertAdjacentHTML("beforeend", formatCard(record));
-    });
+    records.forEach(record => recordsContainer.insertAdjacentHTML("beforeend", formatCard(record)));
 
-    // Add event listeners to mark-as-paid buttons
     document.querySelectorAll(".mark-as-paid").forEach(btn => {
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener("click", () => {
         const id = btn.getAttribute("data-id");
         const record = records.find(r => String(r.id) === String(id));
-        if (record) {
-          console.log("🔄 Mark as paid clicked for record:", record);
-          openPaymentModal(record);
-        }
+        if (record) openPaymentModal(record);
       });
     });
   }
 
   function openPaymentModal(record) {
     selectedRecord = record;
-    console.log("📋 Opening payment modal for:", record);
-    
     if (modalPeriod) modalPeriod.textContent = record.period;
     if (modalAmount) modalAmount.textContent = record.taxAmount;
     if (paymentModal) {
@@ -221,7 +171,6 @@ const records = payload.data.map(record => {
 
   if (closeModalBtn) {
     closeModalBtn.addEventListener("click", () => {
-      console.log("❌ Closing payment modal");
       if (paymentModal) {
         paymentModal.classList.remove("show");
         paymentModal.setAttribute("aria-hidden", "true");
@@ -231,40 +180,16 @@ const records = payload.data.map(record => {
   }
 
   async function markAsPaidRequest(recordId) {
-    if (!userId || !token) {
-      console.error("❌ No auth for mark as paid");
-      return { success: false, message: "Not authenticated" };
-    }
-    
+    if (!userId || !token) return { success: false, message: "Not authenticated" };
     try {
-      // CORRECT ENDPOINT FROM POSTMAN: /api/tax/mark-paid/:userId/:taxId
       const url = `${API_BASE_URL}/tax/mark-paid/${userId}/${recordId}`;
-      console.log("📤 Marking as paid:", url);
-      
-      // CORRECT REQUEST BODY FROM POSTMAN
       const requestBody = {
         amount: selectedRecord.rawTaxAmount,
-        paidOn: new Date().toISOString().split('T')[0] // Format as YYYY-MM-DD
+        paidOn: new Date().toISOString().split('T')[0]
       };
-      
-      console.log("📦 Request body:", requestBody);
-      
-      const res = await fetch(url, {
-        method: "PATCH",
-        headers: authHeaders(),
-        body: JSON.stringify(requestBody)
-      });
-      
-      console.log("📥 Response status:", res.status);
-      
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
-      
-      const data = await res.json();
-      console.log("📥 Mark as paid response:", data);
-      return data;
-      
+      const res = await fetch(url, { method: "PATCH", headers: authHeaders(), body: JSON.stringify(requestBody) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      return await res.json();
     } catch (err) {
       console.error("❌ markAsPaidRequest error:", err);
       return { success: false, message: "Request failed: " + err.message };
@@ -273,52 +198,35 @@ const records = payload.data.map(record => {
 
   if (confirmPaymentBtn) {
     confirmPaymentBtn.addEventListener("click", async () => {
-      if (!selectedRecord) {
-        console.error("❌ No record selected for payment");
-        return;
-      }
-      
-      console.log("✅ Confirming payment for:", selectedRecord);
-      
+      if (!selectedRecord) return;
       confirmPaymentBtn.disabled = true;
       confirmPaymentBtn.textContent = "Processing...";
-      
       const resp = await markAsPaidRequest(selectedRecord.id);
-      
       confirmPaymentBtn.disabled = false;
       confirmPaymentBtn.textContent = "Confirm Payment";
-      
       if (resp && resp.success) {
-        console.log("✅ Payment marked successfully");
         if (paymentModal) paymentModal.classList.remove("show");
         showToast();
         selectedRecord = null;
-        // Refresh the records
-        setTimeout(() => fetchTaxRecords(), 500);
+        setTimeout(fetchTaxRecords, 500);
       } else {
-        const errorMsg = resp?.message || "Failed to mark as paid. Please try again.";
-        console.error("❌ Payment failed:", errorMsg);
-        alert(`❌ ${errorMsg}`);
+        alert(`❌ ${resp?.message || "Failed to mark as paid"}`);
       }
     });
   }
 
   function showToast() {
-    console.log("🎉 Showing success toast");
     if (toast) {
       toast.classList.add("show");
-      setTimeout(() => {
-        toast.classList.remove("show");
-      }, 3000);
+      setTimeout(() => toast.classList.remove("show"), 3000);
     } else {
       alert("✅ Payment marked successfully!");
     }
   }
 
-  // Tab functionality
+  // Tabs
   tabs.forEach(tab => {
     tab.addEventListener("click", () => {
-      console.log("🔘 Tab clicked:", tab.getAttribute("data-status"));
       tabs.forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
       activeStatus = tab.getAttribute("data-status") || "";
@@ -326,24 +234,9 @@ const records = payload.data.map(record => {
     });
   });
 
-  // Filter change handlers
-  if (monthSelect) {
-    monthSelect.addEventListener("change", () => {
-      console.log("📅 Month filter changed");
-      fetchTaxRecords();
-    });
-  }
-  
-  if (yearSelect) {
-    yearSelect.addEventListener("change", () => {
-      console.log("📅 Year filter changed");
-      fetchTaxRecords();
-    });
-  }
+  if (monthSelect) monthSelect.addEventListener("change", fetchTaxRecords);
+  if (yearSelect) yearSelect.addEventListener("change", fetchTaxRecords);
 
-  // Initialize
   console.log("🚀 Initializing tax history...");
-  console.log("User ID:", userId);
-  console.log("Token exists:", !!token);
   fetchTaxRecords();
 })();
