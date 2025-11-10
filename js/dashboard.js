@@ -69,17 +69,26 @@ function updateUserInfo() {
 
   console.log("📊 Dashboard user info:", { userName, userType });
 
-  const userNameElement = document.querySelector(".user-info h2");
+  // Update all h2 elements in user-info (both mobile and desktop)
+  const userNameElements = document.querySelectorAll(".user-info h2");
   const userTypeElement = document.querySelector(".user-info span");
 
-  if (userNameElement) {
-    userNameElement.textContent = userName;
+  if (userNameElements.length > 0) {
+    userNameElements.forEach(el => {
+      el.textContent = userName;
+    });
     console.log("✅ Updated user name display");
+  } else {
+    console.warn("⚠️ User name element not found");
   }
 
   if (userTypeElement) {
-    userTypeElement.textContent = `${userType} account`;
+    // Capitalize first letter
+    const displayType = userType.charAt(0).toUpperCase() + userType.slice(1);
+    userTypeElement.textContent = `${displayType} account`;
     console.log("✅ Updated account type display");
+  } else {
+    console.warn("⚠️ Account type element not found");
   }
 }
 

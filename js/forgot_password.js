@@ -39,13 +39,18 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("📥 Forgot password response:", data);
 
       if (data.success) {
-        alert("✅ Password reset link sent to your email! Please check your inbox.");
+        // Save email for verify-reset page
+        localStorage.setItem("resetEmail", email);
+        
+        alert("✅ Password reset OTP sent to your email! Please check your inbox.");
+        
         // Clear the form
         emailInput.value = "";
-        // Optionally redirect back to login after a delay
+        
+        // Redirect to OTP verification page
         setTimeout(() => {
-          window.location.href = "login.html";
-        }, 2000);
+          window.location.href = "verify-reset.html";
+        }, 1500);
       } else {
         alert(`❌ ${data.message || "Failed to send reset email. Please try again."}`);
       }
