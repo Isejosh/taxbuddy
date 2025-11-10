@@ -68,8 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Use the exact endpoint from your backend: PUT /auth/reset_password/:token
       const data = await apiRequest(`/auth/reset_password/${token}`, "PUT", { 
-        password 
-      });
+    password, 
+    confirmPassword 
+  });
 
       console.log("📥 Reset response:", data);
 
