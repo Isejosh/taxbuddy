@@ -1,5 +1,5 @@
 (function () {
-  const apiBase = "https://tax-tracker-backend.onrender.com/api/tax";
+  const API_BASE_URL = "https://tax-tracker-backend.onrender.com/api";
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("authToken") || localStorage.getItem("token");
 
@@ -38,9 +38,7 @@
   function showEmpty(msg) {
     if (emptyState) {
       emptyState.style.display = "flex";
-    }
-    if (recordsContainer) {
-      recordsContainer.style.display = "none";
+      if (recordsContainer) recordsContainer.style.display = "none";
     }
     const emptyText = document.getElementById("emptyText");
     if (msg && emptyText) emptyText.textContent = msg;
@@ -52,6 +50,8 @@
   }
 
   async function fetchTaxRecords() {
+    console.log("🔄 Fetching tax records...");
+    
     if (!userId || !token) {
       showEmpty("Please log in to view tax history.");
       return;
@@ -59,19 +59,34 @@
 
     const month = monthSelect?.value || "";
     const year = yearSelect?.value || "";
+    
+    console.log("📅 Filters - Month:", month, "Year:", year, "Status:", activeStatus);
+
+    // Build URL based on available parameters
+    let url = `${API_BASE_URL}/tax/records`;
     const params = new URLSearchParams();
+    
+    if (userId) params.append("userId", userId);
     if (month && month !== "Month") params.append("month", month);
     if (year) params.append("year", year);
     if (activeStatus) params.append("status", activeStatus);
-
-    const url = `${apiBase}/records/${userId}?${params.toString()}`;
     
-    console.log("📤 Fetching tax records:", url);
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    console.log("🌐 API URL:", url);
     
     try {
-      const res = await fetch(url, { headers: authHeaders() });
+      const res = await fetch(url, { 
+        headers: authHeaders() 
+      });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
       const payload = await res.json();
-
       console.log("📥 Tax records response:", payload);
 
       if (!payload.success || !payload.data || payload.data.length === 0) {
@@ -80,11 +95,11 @@
         return;
       }
 
-      // Process records to ensure proper format
+      // Process records
       const records = payload.data.map(record => {
-        console.log("📋 Raw record:", record);
+        console.log("📋 Processing record:", record);
         
-        // Extract numeric values safely
+        // Extract values with fallbacks
         const totalIncome = record.totalIncome || record.income || 0;
         const taxAmount = record.taxAmount || record.taxPayable || 0;
         const paidAmount = record.paidAmount || (record.paidStatus === "paid" ? taxAmount : 0);
@@ -114,29 +129,36 @@
           paidOn: record.paidOn || record.paidDate || "Not Paid",
           paidAmount: parseFloat(paidAmount),
           rawIncome: parseFloat(totalIncome),
-          rawTaxAmount: parseFloat(taxAmount)
+          rawTaxAmount: parseFloat(taxAmount),
+          month: record.month,
+          year: record.taxYear
         };
       });
 
       console.log("✅ Processed records:", records);
-
       updateSummary(records);
       renderRecords(records);
       showRecords();
+      
     } catch (err) {
-      console.error("❌ fetchTaxRecords error", err);
-      showEmpty("Failed to load tax history. Try again later.");
+      console.error("❌ fetchTaxRecords error:", err);
+      showEmpty("Failed to load tax history. Please try again later.");
     }
   }
 
   function updateSummary(records) {
+    console.log("📊 Updating summary with records:", records);
+    
     const paid = records.filter(r => r.paidStatus === "paid");
     const unpaid = records.filter(r => r.paidStatus === "unpaid");
-    const totalPaidAmount = paid.reduce((sum, r) => {
-      return sum + (r.paidAmount || 0);
-    }, 0);
+    const totalPaidAmount = paid.reduce((sum, r) => sum + (r.paidAmount || 0), 0);
 
-    console.log("📊 Summary:", { total: records.length, paid: paid.length, unpaid: unpaid.length, totalPaidAmount });
+    console.log("📈 Summary stats:", { 
+      total: records.length, 
+      paid: paid.length, 
+      unpaid: unpaid.length, 
+      totalPaidAmount 
+    });
 
     if (summaryEls.total) summaryEls.total.textContent = records.length;
     if (summaryEls.paid) summaryEls.paid.textContent = paid.length;
@@ -146,7 +168,8 @@
 
   function formatCard(record) {
     const isPaid = record.paidStatus === "paid";
-    const paidOn = record.paidOn === "Not Paid" ? "Pending" : new Date(record.paidOn).toLocaleDateString();
+    const paidOn = record.paidOn === "Not Paid" ? "Pending" : 
+                  new Date(record.paidOn).toLocaleDateString();
     
     return `
       <div class="paid-state" data-id="${record.id}">
@@ -170,7 +193,9 @@
             <p class="paid-text_bottom">${paidOn}</p>
           </div>
         </div>
-        ${isPaid ? "" : `<button class="paid-btn unpaid-btn mark-as-paid" data-id="${record.id}"><i class="ph ph-check"></i> Mark as Paid</button>`}
+        ${isPaid ? '' : `<button class="paid-btn unpaid-btn mark-as-paid" data-id="${record.id}">
+          <i class="ph ph-check"></i> Mark as Paid
+        </button>`}
       </div>
     `;
   }
@@ -178,21 +203,30 @@
   function renderRecords(records) {
     if (!recordsContainer) return;
     
+    console.log("🎨 Rendering records:", records.length);
     recordsContainer.innerHTML = "";
-    records.forEach(r => recordsContainer.insertAdjacentHTML("beforeend", formatCard(r)));
+    
+    records.forEach(record => {
+      recordsContainer.insertAdjacentHTML("beforeend", formatCard(record));
+    });
 
+    // Add event listeners to mark-as-paid buttons
     document.querySelectorAll(".mark-as-paid").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (e) => {
         const id = btn.getAttribute("data-id");
-        const rec = records.find(x => String(x.id) === String(id));
-        if (!rec) return;
-        openPaymentModal(rec);
+        const record = records.find(r => String(r.id) === String(id));
+        if (record) {
+          console.log("🔄 Mark as paid clicked for record:", record);
+          openPaymentModal(record);
+        }
       });
     });
   }
 
   function openPaymentModal(record) {
     selectedRecord = record;
+    console.log("📋 Opening payment modal for:", record);
+    
     if (modalPeriod) modalPeriod.textContent = record.period;
     if (modalAmount) modalAmount.textContent = record.taxAmount;
     if (paymentModal) {
@@ -203,6 +237,7 @@
 
   if (closeModalBtn) {
     closeModalBtn.addEventListener("click", () => {
+      console.log("❌ Closing payment modal");
       if (paymentModal) {
         paymentModal.classList.remove("show");
         paymentModal.setAttribute("aria-hidden", "true");
@@ -212,10 +247,13 @@
   }
 
   async function markAsPaidRequest(recordId) {
-    if (!userId || !token) return { success: false, message: "Not authenticated" };
+    if (!userId || !token) {
+      console.error("❌ No auth for mark as paid");
+      return { success: false, message: "Not authenticated" };
+    }
     
     try {
-      const url = `${apiBase}/mark-paid/${recordId}`;
+      const url = `${API_BASE_URL}/tax/mark-paid/${recordId}`;
       console.log("📤 Marking as paid:", url);
       
       const requestBody = {
@@ -232,19 +270,28 @@
         body: JSON.stringify(requestBody)
       });
       
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
       const data = await res.json();
       console.log("📥 Mark as paid response:", data);
-      
       return data;
+      
     } catch (err) {
-      console.error("❌ markAsPaidRequest error", err);
-      return { success: false, error: "Request failed" };
+      console.error("❌ markAsPaidRequest error:", err);
+      return { success: false, message: "Request failed: " + err.message };
     }
   }
 
   if (confirmPaymentBtn) {
     confirmPaymentBtn.addEventListener("click", async () => {
-      if (!selectedRecord) return;
+      if (!selectedRecord) {
+        console.error("❌ No record selected for payment");
+        return;
+      }
+      
+      console.log("✅ Confirming payment for:", selectedRecord);
       
       confirmPaymentBtn.disabled = true;
       confirmPaymentBtn.textContent = "Processing...";
@@ -255,47 +302,76 @@
       confirmPaymentBtn.textContent = "Confirm Payment";
       
       if (resp && resp.success) {
+        console.log("✅ Payment marked successfully");
         if (paymentModal) paymentModal.classList.remove("show");
         showToast();
         selectedRecord = null;
-        fetchTaxRecords(); // Refresh the list
+        // Refresh the records
+        setTimeout(() => fetchTaxRecords(), 500);
       } else {
-        alert(`❌ ${resp.message || "Failed to mark as paid. Try again."}`);
+        const errorMsg = resp?.message || "Failed to mark as paid. Please try again.";
+        console.error("❌ Payment failed:", errorMsg);
+        alert(`❌ ${errorMsg}`);
       }
     });
   }
 
   function showToast() {
+    console.log("🎉 Showing success toast");
     if (toast) {
       toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 3000);
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
     } else {
       alert("✅ Payment marked successfully!");
     }
   }
 
-  tabs.forEach(t => {
-    t.addEventListener("click", () => {
-      tabs.forEach(x => x.classList.remove("active"));
-      t.classList.add("active");
-      activeStatus = t.getAttribute("data-status") || "";
+  // Tab functionality
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      console.log("🔘 Tab clicked:", tab.getAttribute("data-status"));
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      activeStatus = tab.getAttribute("data-status") || "";
       fetchTaxRecords();
     });
   });
 
-  if (monthSelect) monthSelect.addEventListener("change", fetchTaxRecords);
-  if (yearSelect) yearSelect.addEventListener("change", fetchTaxRecords);
-
-  // Debug function to check what's in localStorage
-  function debugLocalStorage() {
-    console.log("🔍 localStorage debug:");
-    console.log("userId:", localStorage.getItem("userId"));
-    console.log("authToken:", localStorage.getItem("authToken") ? "Exists" : "Missing");
-    console.log("token:", localStorage.getItem("token") ? "Exists" : "Missing");
-    console.log("user:", localStorage.getItem("user"));
+  // Filter change handlers
+  if (monthSelect) {
+    monthSelect.addEventListener("change", () => {
+      console.log("📅 Month filter changed");
+      fetchTaxRecords();
+    });
+  }
+  
+  if (yearSelect) {
+    yearSelect.addEventListener("change", () => {
+      console.log("📅 Year filter changed");
+      fetchTaxRecords();
+    });
   }
 
-  // Initial load
-  debugLocalStorage();
+  // Debug function
+  function debugAuth() {
+    console.log("🔍 Auth Debug:");
+    console.log("User ID:", userId);
+    console.log("Token exists:", !!token);
+    console.log("Full user data:", localStorage.getItem("user"));
+  }
+
+  // Initialize
+  console.log("🚀 Initializing tax history...");
+  debugAuth();
   fetchTaxRecords();
+
+  // Also fetch when page becomes visible
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      console.log("🔍 Page visible, refreshing data...");
+      fetchTaxRecords();
+    }
+  });
 })();

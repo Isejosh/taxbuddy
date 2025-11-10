@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const monthSelect = document.querySelector("#monthSelect");
   const yearSelect = document.querySelector("#yearSelect");
 
+  // API Base URL
+  const API_BASE_URL = "https://tax-tracker-backend.onrender.com/api";
+
   // Hide tax result at start
   if (taxResult) {
     taxResult.style.display = "none";
@@ -216,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("✅ All page elements updated with tax data");
 
-    // "Save to Tracker" button on complete page
+    // "Save to Tracker" button on complete page - FIXED VERSION
     const saveBtn = document.querySelector(".comp_btn1");
     saveBtn?.addEventListener("click", async function () {
       console.log("💾 Save to Tracker clicked");
@@ -244,33 +247,40 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         console.log("📤 Saving tax record to backend:", {
+          userId: userId,
           taxType: data.taxType,
           taxYear: parseInt(data.year),
           totalIncome: data.income,
           taxAmount: data.taxPayable,
           month: data.month,
+          paidStatus: "unpaid"
         });
 
-        // Send to backend to save
-        const response = await apiRequest(
-          `/tax/compute/${userId}`,
-          "POST",
-          {
+        // FIXED: Use direct fetch instead of apiRequest
+        const response = await fetch(`${API_BASE_URL}/tax/compute`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: userId,
             taxType: data.taxType,
             taxYear: parseInt(data.year),
             totalIncome: data.income,
             taxAmount: data.taxPayable,
             month: data.month,
-          },
-          true
-        );
+            paidStatus: "unpaid"
+          })
+        });
 
-        console.log("📥 Save response:", response);
+        const responseData = await response.json();
+        console.log("📥 Save response:", responseData);
 
-        if (response.success) {
+        if (responseData.success) {
           // Mark as saved
           data.saved = true;
-          data.taxRecordId = response.data._id || response.data.id;
+          data.taxRecordId = responseData.data._id || responseData.data.id;
           localStorage.setItem("taxData", JSON.stringify(data));
 
           console.log("✅ Tax record saved successfully!");
@@ -281,8 +291,8 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = "tax-history.html";
           }, 1500);
         } else {
-          console.error("❌ Save failed:", response.message);
-          alert(`❌ ${response.message || "Failed to save tax record"}`);
+          console.error("❌ Save failed:", responseData.message);
+          alert(`❌ ${responseData.message || "Failed to save tax record"}`);
         }
       } catch (error) {
         console.error("❌ Save tax error:", error);
