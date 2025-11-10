@@ -18,43 +18,48 @@ document.addEventListener("DOMContentLoaded", () => {
     submitBtn.disabled = true;
 
     try {
-      console.log("Login request:", { email });
+      console.log("📤 Login request:", { email });
 
       const response = await apiRequest("/auth/sign_in", "POST", { email, password });
-      console.log("Login response:", response);
+      console.log("📥 Login response:", response);
 
-      
       if (!response.success) {
-        alert(`${response.message || "Invalid email or password."}`);
+        alert(`❌ ${response.message || "Invalid email or password."}`);
         return;
       }
 
-      const userData = response.data;       
-      const token = userData.token;         
+      // ✅ FIXED: Get user data and token from root level, not from response.data
+      const userData = response.user || response.data;       
+      const token = response.token || response.access_token;         
+
+      console.log("🔑 Extracted:", { userData, token });
 
       if (!userData || !token) {
-        console.error("Missing user data or token:", response);
+        console.error("❌ Missing user data or token:", response);
         alert("Login failed. Invalid response from server.");
         return;
       }
 
       setUserData(userData, token);
-      console.log("Stored user data:", userData);
+      console.log("💾 Stored user data:", userData);
 
-      alert("Login successful!");
+      alert("✅ Login successful!");
 
-      
-      const accountType = userData.account_type || "individual";
+      // ✅ FIXED: Get account type with fallbacks
+      const accountType = userData.account_type || userData.accountType || "individual";
       console.log("👤 Account type:", accountType);
 
-      if (accountType === "business") {
-        window.location.href = "dashboard_business.html";
-      } else {
-        window.location.href = "dashboard_individual.html";
-      }
+      // Redirect based on account type
+      setTimeout(() => {
+        if (accountType === "business") {
+          window.location.href = "dashboard_business.html";
+        } else {
+          window.location.href = "dashboard_individual.html";
+        }
+      }, 1000);
 
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("❌ Login error:", error);
       alert(`⚠️ ${error.message || "Server error. Please try again later."}`);
     } finally {
       submitBtn.textContent = originalText;
