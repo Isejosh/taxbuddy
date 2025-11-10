@@ -44,6 +44,7 @@ body{
     align-items: center;
     font-size: 1.6rem;
     padding: 2rem;flex-wrap: wrap;
+    gap: 2rem;
 }
 
 .heading-image{
