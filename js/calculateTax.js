@@ -48,50 +48,60 @@ document.addEventListener("DOMContentLoaded", function () {
 
       let taxPayable, taxRate, effectiveRate;
 
+      // --------------------------
+      // BUSINESS TAX LOGIC (2026)
+      // --------------------------
       if (userType === "business") {
-        taxRate = income < 25000000 ? 0.20 : 0.30;
+        if (income <= 100000000) {
+          taxRate = 0; // Small business exemption
+        } else if (income < 25000000) {
+          taxRate = 0.15;
+        } else {
+          taxRate = 0.30; // Minimum effective tax 15% for multinationals handled elsewhere
+        }
         taxPayable = income * taxRate;
         effectiveRate = (taxRate * 100).toFixed(2);
-      } else {
-        // Individual PIT brackets
-        if (income <= 300000) taxRate = 0.07;
-        else if (income <= 600000) taxRate = 0.11;
-        else if (income <= 1100000) taxRate = 0.15;
-        else if (income <= 1600000) taxRate = 0.19;
-        else if (income <= 3200000) taxRate = 0.21;
-        else taxRate = 0.24;
+      }
 
-        // Calculate tax progressively
-        let tax = 0;
-        let brackets = [
-          { limit: 300000, rate: 0.07 },
-          { limit: 600000, rate: 0.11 },
-          { limit: 1100000, rate: 0.15 },
-          { limit: 1600000, rate: 0.19 },
-          { limit: 3200000, rate: 0.21 },
+      // --------------------------
+      // INDIVIDUAL TAX LOGIC (2026)
+      // --------------------------
+      else {
+        const brackets = [
+          { limit: 800000, rate: 0.00 },
+          { limit: 3000000, rate: 0.15 },
+          { limit: 12000000, rate: 0.18 },
+          { limit: 25000000, rate: 0.21 },
+          { limit: 50000000, rate: 0.23 },
+          { limit: Infinity, rate: 0.25 }
         ];
-        let remaining = income;
+
+        let tax = 0;
+        let prevLimit = 0;
 
         for (let i = 0; i < brackets.length; i++) {
           const { limit, rate } = brackets[i];
-          const prevLimit = i === 0 ? 0 : brackets[i - 1].limit;
-          const taxable = Math.min(remaining, limit - prevLimit);
+          const taxable = Math.min(income, limit) - prevLimit;
           if (taxable > 0) tax += taxable * rate;
+          if (income <= limit) break;
+          prevLimit = limit;
         }
-        if (income > 3200000) tax += (income - 3200000) * 0.24;
 
         taxPayable = tax;
-        effectiveRate = ((taxPayable / income) * 100).toFixed(2);
+        taxRate = tax / income;
+        effectiveRate = (taxRate * 100).toFixed(2);
       }
 
-      // Store for completion page
+      // --------------------------
+      // Store Result
+      // --------------------------
       const taxData = {
         month,
         year,
         income,
         taxPayable,
         effectiveRate,
-        taxRatePercent: taxRate * 100,
+        taxRatePercent: (taxRate * 100).toFixed(2),
         taxType,
         userType,
         saved: false,
@@ -139,14 +149,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // --------------------------
-  // Complete Page Logic
+  // Completion Page Logic
   // --------------------------
   const data = JSON.parse(localStorage.getItem("taxData") || "{}");
   if (document.body.classList.contains("complete") && data.income) {
     const dateEl = document.querySelector(".date");
     if (dateEl) dateEl.textContent = `${data.month} ${data.year}`;
 
-    // Helper to format Naira
     const formatNGN = num => num.toLocaleString("en-NG", { style: "currency", currency: "NGN" });
 
     const updateCard = (incomeEl, taxEl, rateEl, bandAmtEl, bandPctEl) => {
@@ -154,10 +163,9 @@ document.addEventListener("DOMContentLoaded", function () {
       if (taxEl) taxEl.textContent = formatNGN(data.taxPayable);
       if (rateEl) rateEl.textContent = `${data.effectiveRate}%`;
       if (bandAmtEl) bandAmtEl.textContent = formatNGN(data.taxPayable);
-      if (bandPctEl) bandPctEl.textContent = `${data.taxRatePercent.toFixed(0)}%`;
+      if (bandPctEl) bandPctEl.textContent = `${data.taxRatePercent}%`;
     };
 
-    // First section
     updateCard(
       document.querySelector(".taxbreakdown_resul .card_one h1"),
       document.querySelector(".taxbreakdown_resul .band h4"),
@@ -166,7 +174,6 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelector(".taxbreakdown_resul .tax_band > p")
     );
 
-    // Second section
     updateCard(
       document.querySelector(".tax_payable .card_one h1"),
       document.querySelector(".tax_payable .card_two h1"),
@@ -175,7 +182,6 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelector(".tax_payable .tax_band > p")
     );
 
-    // Save button
     const saveBtn = document.querySelector(".comp_btn1");
     saveBtn?.addEventListener("click", async function () {
       if (data.saved) {
@@ -222,7 +228,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // Calculate Another
     const calcAnother = document.querySelector(".comp_btn2");
     calcAnother?.addEventListener("click", () => {
       localStorage.removeItem("taxData");
