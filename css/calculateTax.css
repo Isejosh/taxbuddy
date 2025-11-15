@@ -465,6 +465,7 @@ ul li {
     text-align: center;
     width: 100%;
     gap: 20px;
+    font-size: var(--body-regular);
 }
 
 .footer-message .act {
