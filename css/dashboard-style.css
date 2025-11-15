@@ -87,8 +87,10 @@ body {
 .link {
   width: 75%;
   transition: transform 0.3s ease;
-  display: flex:
-  gap: 10px
+}
+
+.link span{
+  margin-right: 12px;
 }
 
 .link img {
