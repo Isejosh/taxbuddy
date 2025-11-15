@@ -44,9 +44,9 @@ body {
 
 .side-nav {
   flex: 25%;
+  height: 100vh;
   border-right: 1px solid #bbbaba;
   position: sticky;
-  bottom: 0px;
   overflow: hidden;
   padding: 20px;
 }
@@ -67,11 +67,12 @@ body {
 
 .nav-links .dashboard-link {
   color: var(--white);
-  padding: 8px 10px;
+  padding: 8px 4px;
   width: 70%;
   text-align: center;
   border-radius: 8px;
   transition: transform 0.3s ease;
+  background-color: #080;
 }
 
 .nav-links a:hover,
@@ -80,31 +81,18 @@ body {
   background-color: #7e7d7d;
 }
 
-.nav-links .dashboard-link {
-  background-color: #080;
-}
-
 .link {
   width: 75%;
-  transition: transform 0.3s ease;
-}
-
-.link span{
-  margin-right: 12px;
-}
-
-.link img {
-  height: 10px;
-  margin-right: 12px;
+  transition: transform 0.5s ease;
+  display: flex;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 6px 8px;
 }
 
 .link:hover {
-  /* transform: translateY(-2px); */
-  background-color: #080;
-  border-radius: 8px;
   color: var(--white);
-  /* font-weight: 500; */
-  padding: 6px 8px;
+
 }
 
 .sign-out-wrapper {
@@ -126,12 +114,16 @@ body {
   background-color: #f00;
 }
 
+
+/* Dashboard Container */
+
 .dashboard-container {
   flex: 1fr;
+  height: 100vh;
+  overflow-y: scroll;
   background: var(--white);
-  padding: 40px;
+  padding: 40px 40px 0px 40px;
   width: 100%;
-  position: relative;
 }
 
 .header-top {
@@ -145,7 +137,7 @@ body {
   display: block;
 }
 
-.user-info .mobile{
+.user-info .mobile {
   display: none;
 }
 
@@ -173,7 +165,7 @@ body {
   transition: transform 0.3s ease;
 }
 
-.notification-btn:hover{
+.notification-btn:hover {
   transform: translateY(-2px);
 }
 
@@ -199,6 +191,7 @@ body {
   border-radius: 8px;
   appearance: none;
 }
+
 /* Grid-container */
 .grid-container {
   display: grid;
@@ -375,6 +368,22 @@ body {
   background-color: #d4e8d3;
 }
 
+/* Footer Message */
+
+.footer-message {
+  font-size: var(--body-regular);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  position: static;
+  bottom: 0px;
+}
+
+.footer-message .act {
+  color: var(--primary);
+}
+
 /* Footer Navigation */
 
 .bottom-nav {
@@ -407,19 +416,6 @@ body {
 }
 
 .nav-item.active {
-  color: var(--primary);
-}
-.footer-message {
-  font-size: var(--body-regular);
-  width: 90%;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  position: absolute;
-  bottom: 0px;
-}
-
-.footer-message .act {
   color: var(--primary);
 }
 
@@ -494,6 +490,7 @@ body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
