@@ -1,25 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-    <link rel="stylesheet" href="css/dashboard-style.css" />
-  </head>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
 
-  <body>
-     <div class="side-nav">
+<body>
+    <div class="side-nav">
         <img class="tax-buddy-img" src="assets/images/Taxbuddy App Logo.png" alt="">
 
         <div class="nav-links">
@@ -43,46 +38,8 @@
             <a href="login.html" class="sign-out-link">Sign out</a>
         </div>
     </div>
-    
+
     <div class="dashboard-container">
-      <div class="header-top">
-        <div class="user-info">
-          <p>Welcome,</p>
-          <h2 class="mobile"></h2>
-          <h2 class="desktop"></h2>
-          <span></span>
-        </div>
-        <a href="notification.html" class="notification-btn">
-          <img src="icons/notification-btn.svg" alt="" />
-        </a>
-      </div>
-
-      <div class="date-filters">
-        <div class="selector-container">
-          <select name="month">
-            <option value="january">January</option>
-            <option value="february">February</option>
-            <option value="march">March</option>
-            <option value="april">April</option>
-            <option value="may">May</option>
-            <option value="june">June</option>
-            <option value="july">July</option>
-            <option value="august">August</option>
-            <option value="september">September</option>
-            <option value="october">October</option>
-            <option value="november">November</option>
-            <option value="december">December</option>
-          </select>
-        </div>
-        <div class="selector-container">
-          <select name="year">
-            <option>2025</option>
-            <option>2026</option>
-          </select>
-        </div>
-      </div>
-
-       <div class="dashboard-container">
         <div class="header-top">
             <div class="user-info">
                 <p>Welcome,</p>
@@ -233,34 +190,34 @@
             <p class="act">Tax Reform Act 2025</p>
         </div>
     </div>
-    
+
     <!-- Footer-Nav -->
     <nav class="bottom-nav">
-      <a href="dashboard_individual.html" class="nav-item active">
-        <i class="ph ph-house"></i>
-        <span>Home</span>
-      </a>
-      <a href="calculateTax.html" class="nav-item">
-        <i class="ph ph-calculator"></i>
-        <span>Calculator</span>
-      </a>
-      <a href="tax-history.html" class="nav-item">
-        <i class="ph ph-clock"></i>
-        <span>History</span>
-      </a>
-      <a href="notification.html" class="nav-item">
-        <i class="ph ph-bell-simple-ringing"></i>
-        <span>Alerts</span>
-      </a>
-      <a href="profile-settings.html" class="nav-item">
-        <i class="ph ph-user"></i>
-        <span>Profile</span>
-      </a>
+        <a href="dashboard_individual.html" class="nav-item active">
+            <i class="ph ph-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="calculateTax.html" class="nav-item">
+            <i class="ph ph-calculator"></i>
+            <span>Calculator</span>
+        </a>
+        <a href="tax-history.html" class="nav-item">
+            <i class="ph ph-clock"></i>
+            <span>History</span>
+        </a>
+        <a href="notification.html" class="nav-item">
+            <i class="ph ph-bell-simple-ringing"></i>
+            <span>Alerts</span>
+        </a>
+        <a href="profile-settings.html" class="nav-item">
+            <i class="ph ph-user"></i>
+            <span>Profile</span>
+        </a>
     </nav>
 
-      
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/reports.js"></script>
-  </body>
+</body>
+
 </html>
