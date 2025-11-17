@@ -9,12 +9,12 @@
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-    <link rel="stylesheet" href="css/calculateTax.css" />
+    <link rel="stylesheet" href="calculateTax.css" />
 </head>
 
 <body>
     <div class="side-nav">
-        <img class="tax-buddy-img" src="assets/images/Taxbuddy App Logo.png" alt="">
+        <img class="tax-buddy-img" src="Taxbuddy App Logo.svg" alt="">
 
         <div class="nav-links">
             <a href="dashboard_individual.html" class="link dashboard-link">
@@ -41,13 +41,27 @@
 
     <main>
         <header class="heading">
-            <div class="head_text">
-                <a href="dashboard_business.html" class="head_text-back">
-                    <i class="ph ph-arrow-left"></i>
-                </a>
-                <h2>Tax Calculator</h2>
+            <div class="calculator-header">
+                <div class="head-text-wrapper">
+                    <div class="head_text">
+                        <a href="dashboard_business.html" class="head_text-back">
+                            <i class="ph ph-arrow-left"></i>
+                        </a>
+                        <h2>Tax Calculator</h2>
+                    </div>
+                    <p>Calculate your tax obligations based on revenue</p>
+                </div>
+                <div class="user-profile">
+                    <div class="img-wrapper">
+                        <img src="" alt="">
+                    </div>
+                    <!-- <div class="user">
+                        <h4>Samuel John</h4>
+                        <p>Individual</p>
+                    </div> -->
+                </div>
             </div>
-            <p>Calculate your tax obligations based on revenue</p>
+
         </header>
 
         <div class="calculator-grid">
@@ -152,11 +166,11 @@
 
     <!-- Footer Nav -->
     <nav class="bottom-nav">
-        <a href="dashboard_business.html" class="nav-item active">
+        <a href="dashboard_business.html" class="nav-item">
             <i class="ph ph-house"></i>
             <span>Home</span>
         </a>
-        <a href="calculateTax.html" class="nav-item">
+        <a href="calculateTax.html" class="nav-item active">
             <i class="ph ph-calculator"></i>
             <span>Calculator</span>
         </a>
