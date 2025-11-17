@@ -62,7 +62,6 @@ a {
     color: (var(--black));
 }
 
-
 /* Side Navigations */
 
 .side-nav {
@@ -137,27 +136,29 @@ a {
     background-color: #f00;
 }
 
-
-
-
 /* Main Body */
 
 main {
     height: 100vh;
     overflow-y: scroll;
     width: 100%;
-    padding: 2rem 1rem 0 1rem;
+    padding: 4rem 4rem 0 1rem;
 }
 
 .heading {
-    display: flex;
+    /* display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 1.2rem; */
     font-size: var(--body-medium);
 }
 
-.head_text,
-h2 {
+.calculator-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.head_text h2,
+.head_text a {
     font-size: var(--heading);
 }
 
@@ -173,6 +174,41 @@ h2 {
     gap: 2rem;
 }
 
+.head-text-wrapper p {
+    margin-top: 1rem;
+}
+
+.user-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-profile .img-wrapper {
+    background-color: var(--bg-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-profile .user {
+    text-align: end;
+    line-height: 2;
+}
+
+.user h4 {
+    font-size: var(--body-medium);
+    font-weight: 600;
+}
+
+.user p {
+    font-size: var(--body-regular);
+}
 
 /* Calculator Grid */
 
@@ -180,7 +216,7 @@ h2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 30px;
-    margin-top: 4rem;
+    margin-top: 5rem;
 }
 
 
@@ -455,17 +491,14 @@ ul li {
 }
 
 /* Footer Message */
-
 .footer-message {
+    font-size: var(--body-regular);
+    width: 100%;
     display: flex;
     justify-content: center;
-    position: static;
-    left: 0;
-    bottom: 0;
-    text-align: center;
-    width: 100%;
     gap: 20px;
-    font-size: var(--body-regular);
+    position: static;
+    bottom: 0px;
 }
 
 .footer-message .act {
@@ -521,14 +554,20 @@ ul li {
     main {
         width: 85%;
         margin: auto;
+        padding: 2rem 1rem 0 1rem;
     }
 
     .head_text-back {
         display: block;
     }
 
+    .user-profile {
+        display: none;
+    }
+
     .calculator-grid {
         display: block;
+        margin-top: 4rem;
     }
 
     .details_card {
